@@ -14,14 +14,16 @@ request(url, (error, response, html) => {
 
   const temp = ['1', 'Table1-Parcels per holding & Area per parcel', '1', 'ANDAMAN', '23a', 'A & N ISLANDS', '1996', '1996-1997']
   const postData = JSON.stringify({ values: temp })
+  console.log(postData)
   request.post({
     url: 'http://inputsurvey.dacnet.nic.in/districttables.aspx/FillSession',
     data: postData,
     dataType: 'JSON',
     type: 'post',
     async: false,
-    contentType: "application/json; charset=utf-8"
+    contentType: 'application/json; charset=utf-8'
   }, (err, httpResponse, body) => {
-    console.log(httpResponse)
+    assert.equal(err, null)
+    // console.log(httpResponse)
   })
 })
