@@ -65,6 +65,10 @@ for index_year in range(0, num_options_year):
                         button_submit.click()
 
                         # Download the data as a CSV
+                        button_save = driver.find_element_by_xpath('//*[@id="ReportViewer1__ctl5__ctl4__ctl0_ButtonImg"]')
+                        button_save.click()
+                        button_excel = driver.find_element_by_xpath('//*[@id="ReportViewer1__ctl5__ctl4__ctl0_Menu"]/div[5]/a')
+                        button_excel.click()
 
                         # Click back button to go to main page
                         button_back = driver.find_element_by_id("btnBack")
