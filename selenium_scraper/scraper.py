@@ -9,153 +9,124 @@ driver = webdriver.Chrome()
 driver.get("http://agcensus.dacnet.nic.in/DistCharacteristic.aspx")
 driver.set_page_load_timeout(60)
 
-dropdown_year = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlYear")
-num_options_year = len(dropdown_year.find_elements_by_tag_name("option"))
-
-counter_total = 0
-counter_year = 0
-counter_social_group = 0
-counter_state = 0
-counter_district = 0
-counter_tables = 0
-counter_crops = 0
-
 num_retries = 0
 
+def submitForm():
+    """
+    this function submits the form and saves the results as an excel file
+    :param year: index of the option in the year dropdown
+    :param socialGroup: index of the option in the social group dropdown
+    :param state: index of the option in the state dropdown
+    :param district: index of the option in the district dropdown
+    :param tables: index of the option in the tables dropdown
+    :param crops: index of the option in the crops dropdown
+    :return: None
+    """
+    button_submit = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_btnSubmit")
+    button_submit.click()
+
+    # Download the data as a CSV
+    button_save = driver.find_element_by_xpath('//*[@id="ReportViewer1__ctl5__ctl4__ctl0_ButtonImg"]')
+    button_save.click()
+    button_excel = driver.find_element_by_xpath('//*[@id="ReportViewer1__ctl5__ctl4__ctl0_Menu"]/div[5]/a')
+    button_excel.click()
+
+    # Click back button to go to main page
+    button_back = driver.find_element_by_id("btnBack")
+    button_back.click()
+
+def configureDropdowns(options):
+    """
+    this form configures the dropdown options based on the indices specified in the arguments
+    :param options: a list of tuples. The tuple MUST be of length 2. The first item of the tuple is the string ID of the
+                    dropdown element. The second item is the index of the option to choose from that dropdown.
+                    (for example: [('year', 2), ('state', 1)] is a valid argument)
+    :return: list of the string values used for each dropdown option, in the same order as the parameter.
+            (for example: ['2005', 'California'] would be a return value for the example input above)
+    """
+    # Make the unique combination of options from the 6 dropdowns
+    return_array = []
+
+    for option in options:
+        elementID = option[0]
+        index = option[1]
+        dropdown = driver.find_element_by_id(elementID)
+        current_option = dropdown.find_elements_by_tag_name("option")[index]
+        current_option.click()
+        return_array.append(current_option.text)
+
+def findIndexByText(dropdownElement, text):
+    """
+    :param dropdownElement: selenium dropdown element
+    :param text: string to match with option
+    :return: index of the option in the specified dropdown, where the text matches the option's text
+    """
+    for i in range (0, len(dropdownElement.find_elements_by_tag_name('option'))):
+        print(dropdownElement.find_elements_by_tag_name('option')[i].text)
+        if dropdownElement.find_elements_by_tag_name('option')[i].text == text:
+            return i
+    raise Exception('No option with text: ' + text + ' was found')
+
+
+dropdown_year = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlYear")
+num_options_year = len(dropdown_year.find_elements_by_tag_name("option"))
 # Nested for-loops to try every possible combination of the options in the 8 dropdowns
 for index_year in range(0, num_options_year):
+    # Need to click the current year because the other dropdown options change based on this
+    print(index_year)
+    dropdown_year.find_elements_by_tag_name('option')[index_year].click()
+
     dropdown_social_group = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlSocialGroup")
-    # Count only the options where the value matches "ALL SOCIAL GROUPS"
-    for y in dropdown_social_group.find_elements_by_tag_name("option"):
-        print(y.get_attribute('value'))
-    num_options_social_group = len([x for x in dropdown_social_group.find_elements_by_tag_name("option")
-                                    if x.get_attribute('value') == '4'])
+    # We only want the option with "ALL SOCIAL GROUPS" for this project
+    all_social_groups_index = findIndexByText(dropdown_social_group, 'ALL SOCIAL GROUPS')
+    dropdown_social_group.find_elements_by_tag_name('option')[all_social_groups_index].click()
 
-    for index_social_group in range(0, num_options_social_group):
-        dropdown_state = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlState")
-        num_options_state = len(dropdown_year.find_elements_by_tag_name("option"))
+    dropdown_state = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlState")
+    num_options_state = len(dropdown_year.find_elements_by_tag_name("option"))
 
-        for index_state in range(counter_state, num_options_state):
-            dropdown_district = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlDistrict")
-            num_options_district = len(dropdown_district.find_elements_by_tag_name("option"))
+    for index_state in range(0, num_options_state):
+        dropdown_state.find_elements_by_tag_name('option')[index_state].click()
+        dropdown_district = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlDistrict")
+        num_options_district = len(dropdown_district.find_elements_by_tag_name("option"))
 
-            if counter_state == num_options_state - 1:
-                counter_state = 0
-            else:
-                counter_state += 1
+        for index_district in range(0, num_options_district):
+            dropdown_tables = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlTables")
+            cropping_pattern_table_index = findIndexByText(dropdown_tables, 'CROPPING PATTERN')
+            dropdown_tables.find_elements_by_tag_name('option')[cropping_pattern_table_index].click()
 
-            for index_district in range(0, num_options_district):
-                dropdown_tables = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlTables")
-                num_options_tables = len([x for x in dropdown_tables.find_elements_by_tag_name("option")
-                                    if x.get_attribute('value') == '6b'])
+            dropdown_crops = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlCrop")
+            num_options_crops = len(dropdown_crops.find_elements_by_tag_name('option'))
 
-                for index_tables in range(0, num_options_tables):
-                    [x for x in dropdown_tables.find_elements_by_tag_name("option")
-                     if x.get_attribute('value') == '6b'][0].click()
-                    dropdown_crops = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlCrop")
-                    num_options_crops = len(dropdown_crops.find_elements_by_tag_name('option'))
+            for index_crops in range(0, num_options_crops):
 
-                    for index_crops in range(counter_crops, num_options_crops):
-                        log.info('Starting unique combination #' + str(counter_total))
+                dropdown_input = [('_ctl0_ContentPlaceHolder1_ddlYear', index_year),
+                                  ('_ctl0_ContentPlaceHolder1_ddlSocialGroup', all_social_groups_index),
+                                  ('_ctl0_ContentPlaceHolder1_ddlState', index_state),
+                                  ('_ctl0_ContentPlaceHolder1_ddlDistrict', index_district),
+                                  ('_ctl0_ContentPlaceHolder1_ddlTables', cropping_pattern_table_index),
+                                  ('_ctl0_ContentPlaceHolder1_ddlCrop', index_crops)]
+                options = configureDropdowns(dropdown_input)
+                # If anything in this try block fails, we will re-try the same configuration up to 3 times before
+                # we move on to the next one
+                try:
+                    submitForm()
 
-                        # Make the unique combination of options from the 6 dropdowns
-                        dropdown_year = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlYear")
-                        current_option_year = dropdown_year.find_elements_by_tag_name("option")[index_year]
-                        value_year = current_option_year.get_attribute('value')
+                except:
+                    log.error('There was an error while submitting the form for options:\n' +
+                              'Year: ' + str(options[0]) + '\n' +
+                              'Social Group: ' + str(options[1]) + '\n' +
+                              'State: ' + str(options[2]) + '\n' +
+                              'District: ' + str(options[3]) + '\n' +
+                              'Table: ' + str(options[4]) + '\n' +
+                              'Crop: ' + str(options[5]) + '\n')
+                    # TODO: re-try the failed configuration up to 3 times before moving onto the next
+                    num_retries += 1
+                    # Retry here
 
-                        dropdown_social_group = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlSocialGroup")
-                        # Click only the "ALL SOCIAL GROUPS" option
-                        current_option_social_group = [x for x in dropdown_social_group.find_elements_by_tag_name("option") if
-                         x.get_attribute('value') == '4'][index_social_group]
-                        value_social_group = current_option_social_group.get_attribute('value')
+                    # Move onto next
 
-                        dropdown_state = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlState")
-                        current_option_state = dropdown_year.find_elements_by_tag_name("option")[index_state]
-                        value_state = current_option_state.get_attribute('value')
-
-                        dropdown_district = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlDistrict")
-                        current_option_district = dropdown_district.find_elements_by_tag_name("option")[index_district]
-                        value_district = current_option_district.get_attribute('value')
-
-                        dropdown_tables = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlTables")
-                        current_option_tables = [x for x in dropdown_tables.find_elements_by_tag_name("option")
-                            if x.get_attribute('value') == '6b'][index_tables]
-                        value_tables = current_option_tables.get_attribute('value')
-
-                        dropdown_crops = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlCrop")
-                        current_option_crops = dropdown_crops.find_elements_by_tag_name("option")[index_crops]
-                        value_crops = current_option_crops.get_attribute('value')
-
-                        # Click the current unique combination of dropdown options
-                        current_option_year.click()
-                        current_option_social_group.click()
-                        current_option_state.click()
-                        current_option_district.click()
-                        current_option_tables.click()
-                        current_option_crops.click()
-
-                        # If anything in this try block fails, we will re-try the same configuration up to 3 times before
-                        # we move on to the next one
-                        try:
-                            # Click submit button to load the page with data tables
-                            button_submit = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_btnSubmit")
-                            button_submit.click()
-
-                            # Download the data as a CSV
-                            button_save = driver.find_element_by_xpath('//*[@id="ReportViewer1__ctl5__ctl4__ctl0_ButtonImg"]')
-                            button_save.click()
-                            button_excel = driver.find_element_by_xpath('//*[@id="ReportViewer1__ctl5__ctl4__ctl0_Menu"]/div[5]/a')
-                            button_excel.click()
-
-                            # Click back button to go to main page
-                            button_back = driver.find_element_by_id("btnBack")
-                            button_back.click()
-                            log.info('Successfully downloaded file for combination #' + str(counter_total))
-                            counter_total += 1
-
-                            # If we reach the last option for any of the dropdowns, reset to 0. Otherwise, increment
-                            # We need to do this because if we get an error, we want to start over without repeating
-                            # the configurations we have already downloaded.
-                            if counter_crops == num_options_crops - 1:
-                                counter_crops = 0
-                            else:
-                                counter_crops += 1
-
-                            if counter_district == num_options_district - 1:
-                                counter_district = 0
-                            else:
-                                counter_district += 1
-
-                            if counter_tables == num_options_tables - 1:
-                                counter_tables = 0
-                            else:
-                                counter_tables += 1
-
-                            if counter_tables == num_options_tables - 1:
-                                counter_tables = 0
-                            else:
-                                counter_tables += 1
-
-                            if counter_year == num_options_year - 1:
-                                counter_year = 0
-                            else:
-                                counter_year += 1
-
-                        except:
-                            log.error('There was an error while submitting the form for options:\n' +
-                                      'Year: ' + str(current_option_year) + '\n' +
-                                      'Social Group: ' + str(current_option_social_group) + '\n' +
-                                      'State: ' + str(current_option_state) + '\n' +
-                                      'District: ' + str(current_option_district) + '\n' +
-                                      'Table: ' + str(current_option_tables) + '\n' +
-                                      'Crop: ' + str(current_option_crops) + '\n')
-                            # TODO: re-try the failed configuration up to 3 times before moving onto the next
-                            num_retries += 1
-                            # Retry here
-
-                            # Move onto next
-                            if num_retries >= 3:
 
 
 
 driver.close()
+
