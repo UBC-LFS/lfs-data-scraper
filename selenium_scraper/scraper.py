@@ -62,7 +62,6 @@ def findIndexByText(dropdownElement, text):
     :return: index of the option in the specified dropdown, where the text matches the option's text
     """
     for i in range (0, len(dropdownElement.find_elements_by_tag_name('option'))):
-        print(dropdownElement.find_elements_by_tag_name('option')[i].text)
         if dropdownElement.find_elements_by_tag_name('option')[i].text == text:
             return i
     raise Exception('No option with text: ' + text + ' was found')
@@ -73,7 +72,6 @@ num_options_year = len(dropdown_year.find_elements_by_tag_name("option"))
 # Nested for-loops to try every possible combination of the options in the 8 dropdowns
 for index_year in range(0, num_options_year):
     # Need to click the current year because the other dropdown options change based on this
-    print(index_year)
     dropdown_year.find_elements_by_tag_name('option')[index_year].click()
 
     dropdown_social_group = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlSocialGroup")
@@ -119,14 +117,16 @@ for index_year in range(0, num_options_year):
                               'District: ' + str(options[3]) + '\n' +
                               'Table: ' + str(options[4]) + '\n' +
                               'Crop: ' + str(options[5]) + '\n')
-                    # TODO: re-try the failed configuration up to 3 times before moving onto the next
-                    num_retries += 1
-                    # Retry here
-
-                    # Move onto next
-
-
-
+                    for i in range(0,2):
+                        # Retry up to 3 more times. First success breaks out of for-loop
+                        try:
+                            driver.get("http://agcensus.dacnet.nic.in/DistCharacteristic.aspx")
+                            driver.set_page_load_timeout(60)
+                            configureDropdowns(dropdown_input)
+                            submitForm()
+                            break
+                        except:
+                            continue
 
 driver.close()
 
