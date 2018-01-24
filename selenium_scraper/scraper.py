@@ -103,20 +103,30 @@ for index_year in range(0, num_options_year):
                                   ('_ctl0_ContentPlaceHolder1_ddlDistrict', index_district),
                                   ('_ctl0_ContentPlaceHolder1_ddlTables', cropping_pattern_table_index),
                                   ('_ctl0_ContentPlaceHolder1_ddlCrop', index_crops)]
-                options = configureDropdowns(dropdown_input)
                 # If anything in this try block fails, we will re-try the same configuration up to 3 times before
                 # we move on to the next one
                 try:
+                    options = configureDropdowns(dropdown_input)
                     submitForm()
 
                 except:
-                    log.error('There was an error while submitting the form for options:\n' +
-                              'Year: ' + str(options[0]) + '\n' +
-                              'Social Group: ' + str(options[1]) + '\n' +
-                              'State: ' + str(options[2]) + '\n' +
-                              'District: ' + str(options[3]) + '\n' +
-                              'Table: ' + str(options[4]) + '\n' +
-                              'Crop: ' + str(options[5]) + '\n')
+                    # If configureDropdowns failed, then options will be null
+                    if (options != None):
+                        log.error('There was an error while submitting the form for options:\n' +
+                                  'Year: ' + str(options[0]) + '\n' +
+                                  'Social Group: ' + str(options[1]) + '\n' +
+                                  'State: ' + str(options[2]) + '\n' +
+                                  'District: ' + str(options[3]) + '\n' +
+                                  'Table: ' + str(options[4]) + '\n' +
+                                  'Crop: ' + str(options[5]) + '\n')
+                    else:
+                        log.error('There was an error while submitting the form for options:\n' +
+                                  'Year index: ' + str(index_year) + '\n' +
+                                  'Social Group index: ' + str(all_social_groups_index) + '\n' +
+                                  'State index: ' + str(index_state) + '\n' +
+                                  'District index: ' + str(index_district) + '\n' +
+                                  'Table index: ' + str(cropping_pattern_table_index) + '\n' +
+                                  'Crop index: ' + str(index_crops) + '\n')
                     for i in range(0,2):
                         # Retry up to 3 more times. First success breaks out of for-loop
                         try:
@@ -126,7 +136,10 @@ for index_year in range(0, num_options_year):
                             submitForm()
                             break
                         except:
+                            # Keep trying the same configuration
                             continue
+                    # Okay.. current configuration isn't working. Stop trying and move onto the next.
+                    continue
 
 driver.close()
 
