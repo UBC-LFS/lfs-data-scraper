@@ -1,0 +1,24 @@
+{
+  "name": "lfs-data-scraper",
+  "version": "1.0.0",
+  "description": "The purpose of this repo is to scrape the data from these websites:",
+  "main": "index.js",
+  "dependencies": {
+    "node-xlsx": "^0.11.2",
+    "xlsx": "^0.11.18"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UBC-LFS/lfs-data-scraper.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/UBC-LFS/lfs-data-scraper/issues"
+  },
+  "homepage": "https://github.com/UBC-LFS/lfs-data-scraper#readme"
+}
