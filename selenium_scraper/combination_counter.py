@@ -87,32 +87,35 @@ dropdown_year = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlYear")
 num_options_year = len(dropdown_year.find_elements_by_tag_name("option"))
 # Nested for-loops to try every possible combination of the options in the 8 dropdowns
 for index_year in range(0, num_options_year):
-    # Need to click the current year because the other dropdown options change based on this
-    dropdown_year = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlYear")
-    dropdown_year.find_elements_by_tag_name('option')[index_year].click()
+    try:
+        # Need to click the current year because the other dropdown options change based on this
+        dropdown_year = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlYear")
+        dropdown_year.find_elements_by_tag_name('option')[index_year].click()
 
-    dropdown_social_group = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlSocialGroup")
-    # We only want the option with "ALL SOCIAL GROUPS" for this project
-    all_social_groups_index = findIndexByText(dropdown_social_group, 'ALL SOCIAL GROUPS')
-    dropdown_social_group.find_elements_by_tag_name('option')[all_social_groups_index].click()
+        dropdown_social_group = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlSocialGroup")
+        # We only want the option with "ALL SOCIAL GROUPS" for this project
+        all_social_groups_index = findIndexByText(dropdown_social_group, 'ALL SOCIAL GROUPS')
+        dropdown_social_group.find_elements_by_tag_name('option')[all_social_groups_index].click()
 
-    dropdown_state = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlState")
-    num_options_state = len(dropdown_state.find_elements_by_tag_name("option"))
+        dropdown_state = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlState")
+        num_options_state = len(dropdown_state.find_elements_by_tag_name("option"))
+    except UnexpectedAlertPresentException:
+        alert = driver.switch_to.alert
+        alert.accept()
+        continue
 
     for index_state in range(0, num_options_state):
-        dropdown_state = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlState")
-        dropdown_state.find_elements_by_tag_name('option')[index_state].click()
-        dropdown_district = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlDistrict")
-        num_options_district = len(dropdown_district.find_elements_by_tag_name("option"))
+        try:
+            dropdown_state = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlState")
+            dropdown_state.find_elements_by_tag_name('option')[index_state].click()
+            dropdown_district = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlDistrict")
+            num_options_district = len(dropdown_district.find_elements_by_tag_name("option"))
+        except UnexpectedAlertPresentException:
+            alert = driver.switch_to.alert
+            alert.accept()
+            continue
 
         for index_district in range(0, num_options_district):
-        #     try:
-        #         alert = driver.switch_to.alert
-        #         alert.accept()
-        #     except (TimeoutException, NoAlertPresentException):
-        #         print('no alert')
-        #         pass
-
             try:
                 dropdown_district = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlDistrict")
                 dropdown_district.find_elements_by_tag_name('option')[index_district].click()
@@ -137,6 +140,7 @@ for index_year in range(0, num_options_year):
             except UnexpectedAlertPresentException:
                 alert = driver.switch_to.alert
                 alert.accept()
+                continue
 
 print('There are this many unique combinations: ' + str(counter))
 
