@@ -17,6 +17,8 @@ driver.get("http://agcensus.dacnet.nic.in/DistCharacteristic.aspx")
 
 counter = 0
 
+file = open('./mapping.txt', 'w')
+
 def submitForm():
     """
     this function submits the form and saves the results as an excel file
@@ -135,6 +137,10 @@ for index_year in range(0, num_options_year):
                 # If anything in this try block fails, we will re-try the same configuration up to 3 times before
                 # we move on to the next one
                 options = configureDropdowns(dropdown_input)
+                for i in range(0, num_options_crops):
+                    file.write(str(index_year) + ',' + str(all_social_groups_index) + ',' + str(index_state) +
+                               ',' + str(index_district) + ',' + str(cropping_pattern_table_index) +
+                               ',' + str(i) + '\n')
                 counter += num_options_crops
                 print(str(counter))
             except UnexpectedAlertPresentException:

@@ -17,6 +17,9 @@ driver.get("http://agcensus.dacnet.nic.in/DistCharacteristic.aspx")
 
 counter = 0
 
+start_index = input('Specify which index to begin download at (required): ')
+num_download = input('Specify how many files to download (optional): ')
+
 def submitForm():
     """
     this function submits the form and saves the results as an excel file
@@ -97,7 +100,7 @@ for index_year in range(0, num_options_year):
     dropdown_social_group.find_elements_by_tag_name('option')[all_social_groups_index].click()
 
     dropdown_state = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlState")
-    num_options_state = len(dropdown_year.find_elements_by_tag_name("option"))
+    num_options_state = len(dropdown_state.find_elements_by_tag_name("option"))
 
     for index_state in range(0, num_options_state):
         dropdown_state = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlState")
