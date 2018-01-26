@@ -4,7 +4,7 @@ let dir = fs.readdirSync(__dirname);
 
 // filter out .xlsx files
 dir = dir.filter(function (a) {
-  return a.includes('.xlsx');
+    return a.includes('.xlsx');
 });
 
 
@@ -14,11 +14,11 @@ dir.forEach(function(file) {
     xlsxObj.map(function (sheet) {
         //loop through all rows in the sheet and extract it
         sheet.data.map(function(j) {
-          rows.push(j);
+            rows.push(j);
         });
         let writeStr = '';
         rows.map(function (s) {
-          writeStr += s.join(',') + '\n';
+            writeStr += s.join(',') + '\n';
         });
         fs.writeFile(__dirname + '/' + file.split('.')[0] + '.csv', writeStr, function (err) {
             if (err) {
@@ -27,4 +27,4 @@ dir.forEach(function(file) {
             console.log(file + " was saved in the current directory!");
         });
     })
-  });
+});
