@@ -2,8 +2,15 @@ from selenium import webdriver
 import logging
 import os
 import time
+import threading
 from selenium.common.exceptions import NoSuchElementException, TimeoutException, NoAlertPresentException, UnexpectedAlertPresentException
 from selenium.webdriver.chrome.options import Options
+
+
+# class CountingThread(threading.Thread):
+#     def run(self, driver, index_year):
+#         count(driver, index_year)
+
 
 log = logging.getLogger('scraper_log')
 logging.basicConfig(level=logging.INFO, filename='./scraper.log')
@@ -11,47 +18,10 @@ log.setLevel(logging.INFO)
 
 chrome_options = Options()
 chrome_options.add_argument('--dns-prefetch-disable')
-driver = webdriver.Chrome(chrome_options=chrome_options)
-driver.set_page_load_timeout(60)
-driver.get("http://agcensus.dacnet.nic.in/DistCharacteristic.aspx")
 
-counter = 0
+num_threads = 4
 
 file = open('./mapping.txt', 'w')
-
-def submitForm():
-    """
-    this function submits the form and saves the results as an excel file
-    :param year: index of the option in the year dropdown
-    :param socialGroup: index of the option in the social group dropdown
-    :param state: index of the option in the state dropdown
-    :param district: index of the option in the district dropdown
-    :param tables: index of the option in the tables dropdown
-    :param crops: index of the option in the crops dropdown
-    :return: None
-    """
-    button_submit = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_btnSubmit")
-    button_submit.click()
-
-    # Download the data as a CSV
-    button_save = driver.find_element_by_xpath('//*[@id="ReportViewer1__ctl5__ctl4__ctl0_ButtonImg"]')
-    button_save.click()
-    button_excel = driver.find_element_by_xpath('//*[@id="ReportViewer1__ctl5__ctl4__ctl0_Menu"]/div[5]/a')
-    button_excel.click()
-
-
-    # Rename the file so OS doesn't interrupt
-    global counter
-    old_file = os.path.join('C:\\Users\\eric_\\Downloads', 'DistTableDisplay6b.xlsx')
-    while not os.path.exists(old_file):
-        time.sleep(1)
-    new_file = os.path.join('C:\\Users\\eric_\\Downloads', 'DistTableDisplay6b - ' + str(counter) + '.xlsx')
-    os.rename(old_file, new_file)
-    counter += 1
-
-    # Click back button to go to main page
-    button_back = driver.find_element_by_id("btnBack")
-    button_back.click()
 
 def configureDropdowns(options):
     """
@@ -85,26 +55,20 @@ def findIndexByText(dropdownElement, text):
     raise Exception('No option with text: ' + text + ' was found')
 
 
-dropdown_year = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlYear")
-num_options_year = len(dropdown_year.find_elements_by_tag_name("option"))
-# Nested for-loops to try every possible combination of the options in the 8 dropdowns
-for index_year in range(0, num_options_year):
-    try:
-        # Need to click the current year because the other dropdown options change based on this
-        dropdown_year = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlYear")
-        dropdown_year.find_elements_by_tag_name('option')[index_year].click()
+def count(driver, index_year):
+    driver.get("http://agcensus.dacnet.nic.in/DistCharacteristic.aspx")
+    counter = 0
+    # Need to click the current year because the other dropdown options change based on this
+    dropdown_year = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlYear")
+    dropdown_year.find_elements_by_tag_name('option')[index_year].click()
 
-        dropdown_social_group = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlSocialGroup")
-        # We only want the option with "ALL SOCIAL GROUPS" for this project
-        all_social_groups_index = findIndexByText(dropdown_social_group, 'ALL SOCIAL GROUPS')
-        dropdown_social_group.find_elements_by_tag_name('option')[all_social_groups_index].click()
+    dropdown_social_group = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlSocialGroup")
+    # We only want the option with "ALL SOCIAL GROUPS" for this project
+    all_social_groups_index = findIndexByText(dropdown_social_group, 'ALL SOCIAL GROUPS')
+    dropdown_social_group.find_elements_by_tag_name('option')[all_social_groups_index].click()
 
-        dropdown_state = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlState")
-        num_options_state = len(dropdown_state.find_elements_by_tag_name("option"))
-    except UnexpectedAlertPresentException:
-        alert = driver.switch_to.alert
-        alert.accept()
-        continue
+    dropdown_state = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlState")
+    num_options_state = len(dropdown_state.find_elements_by_tag_name("option"))
 
     for index_state in range(0, num_options_state):
         try:
@@ -147,6 +111,9 @@ for index_year in range(0, num_options_year):
                 alert = driver.switch_to.alert
                 alert.accept()
                 continue
+    print('There are this many unique combinations: ' + str(counter))
 
-print('There are this many unique combinations: ' + str(counter))
+driver = webdriver.Chrome(chrome_options=chrome_options)
+driver.set_page_load_timeout(60)
+count(driver,0)
 
