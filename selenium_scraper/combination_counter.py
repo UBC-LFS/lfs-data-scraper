@@ -1,69 +1,15 @@
 from selenium import webdriver
 import logging
-import os
+from selenium.common.exceptions import UnexpectedAlertPresentException
 import time
-import threading
-from selenium.common.exceptions import NoSuchElementException, TimeoutException, NoAlertPresentException, UnexpectedAlertPresentException
-from selenium.webdriver.chrome.options import Options
 from multiprocessing import Process
-
-
-# class CountingThread(threading.Thread):
-#     def run(self, driver, index_year):
-#         count(driver, index_year)
-
-
 
 log = logging.getLogger('scraper_log')
 logging.basicConfig(level=logging.INFO, filename='./scraper.log')
 log.setLevel(logging.INFO)
 
-chrome_options = Options()
-chrome_options.add_argument('--dns-prefetch-disable')
-driver = webdriver.Chrome(chrome_options=chrome_options)
-driver.set_page_load_timeout(60)
-driver.get("http://agcensus.dacnet.nic.in/DistCharacteristic.aspx")
 
-counter = 0
-
-def submitForm():
-    """
-    this function submits the form and saves the results as an excel file
-    :param year: index of the option in the year dropdown
-    :param socialGroup: index of the option in the social group dropdown
-    :param state: index of the option in the state dropdown
-    :param district: index of the option in the district dropdown
-    :param tables: index of the option in the tables dropdown
-    :param crops: index of the option in the crops dropdown
-    :return: None
-    """
-    button_submit = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_btnSubmit")
-    button_submit.click()
-
-    # Download the data as a CSV
-    button_save = driver.find_element_by_xpath('//*[@id="ReportViewer1__ctl5__ctl4__ctl0_ButtonImg"]')
-    button_save.click()
-    button_excel = driver.find_element_by_xpath('//*[@id="ReportViewer1__ctl5__ctl4__ctl0_Menu"]/div[5]/a')
-    button_excel.click()
-
-
-    # Rename the file so OS doesn't interrupt
-    global counter
-    old_file = os.path.join('C:\\Users\\eric_\\Downloads', 'DistTableDisplay6b.xlsx')
-    while not os.path.exists(old_file):
-        time.sleep(1)
-    new_file = os.path.join('C:\\Users\\eric_\\Downloads', 'DistTableDisplay6b - ' + str(counter) + '.xlsx')
-    os.rename(old_file, new_file)
-    counter += 1
-
-    # Click back button to go to main page
-    button_back = driver.find_element_by_id("btnBack")
-    button_back.click()
-
-num_threads = 4
-file = open('./mapping.txt', 'w')
-
-def configureDropdowns(options):
+def configureDropdowns(driver, options):
     """
     this form configures the dropdown options based on the indices specified in the arguments
     :param options: a list of tuples. The tuple MUST be of length 2. The first item of the tuple is the string ID of the
@@ -95,9 +41,14 @@ def findIndexByText(dropdownElement, text):
     raise Exception('No option with text: ' + text + ' was found')
 
 
-def count(driver, index_year):
+def count(index_year):
+    # chrome_options = Options()
+    # chrome_options.add_argument('--dns-prefetch-disable')
+    driver = webdriver.Firefox()
+    driver.set_page_load_timeout(60)
     driver.get("http://agcensus.dacnet.nic.in/DistCharacteristic.aspx")
     counter = 0
+    file = open('./mapping-' + str(index_year) + '.txt', 'w')
     # Need to click the current year because the other dropdown options change based on this
     dropdown_year = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlYear")
     dropdown_year.find_elements_by_tag_name('option')[index_year].click()
@@ -140,7 +91,11 @@ def count(driver, index_year):
                                   ('_ctl0_ContentPlaceHolder1_ddlTables', cropping_pattern_table_index)]
                 # If anything in this try block fails, we will re-try the same configuration up to 3 times before
                 # we move on to the next one
-                options = configureDropdowns(dropdown_input)
+                options = configureDropdowns(driver, dropdown_input)
+                for i in range(0, num_options_crops):
+                    file.write(str(index_year) + ',' + str(all_social_groups_index) + ',' + str(index_state) +
+                               ',' + str(index_district) + ',' + str(cropping_pattern_table_index) +
+                               ',' + str(i) + '\n')
                 counter += num_options_crops
                 print(str(counter))
             except UnexpectedAlertPresentException:
@@ -149,8 +104,15 @@ def count(driver, index_year):
                 continue
     print('There are this many unique combinations: ' + str(counter))
 
-# driver = webdriver.Chrome(chrome_options=chrome_options)
-# driver.set_page_load_timeout(60)
+if __name__ == '__main__':
+    processes = []
 
+    for year in range(0, 4):
+        p = Process(target=p, args=(year,))
+        p.start()
+        processes.append(p)
+        # seems like we need to stagger the spawning of processes for all the browsers to load the initial page properly
+        time.sleep(2)
 
-
+    for p in processes:
+        p.join()
