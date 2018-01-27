@@ -2,8 +2,17 @@ from selenium import webdriver
 import logging
 import os
 import time
+import threading
 from selenium.common.exceptions import NoSuchElementException, TimeoutException, NoAlertPresentException, UnexpectedAlertPresentException
 from selenium.webdriver.chrome.options import Options
+from multiprocessing import Process
+
+
+# class CountingThread(threading.Thread):
+#     def run(self, driver, index_year):
+#         count(driver, index_year)
+
+
 
 log = logging.getLogger('scraper_log')
 logging.basicConfig(level=logging.INFO, filename='./scraper.log')
@@ -51,6 +60,9 @@ def submitForm():
     button_back = driver.find_element_by_id("btnBack")
     button_back.click()
 
+num_threads = 4
+file = open('./mapping.txt', 'w')
+
 def configureDropdowns(options):
     """
     this form configures the dropdown options based on the indices specified in the arguments
@@ -83,26 +95,20 @@ def findIndexByText(dropdownElement, text):
     raise Exception('No option with text: ' + text + ' was found')
 
 
-dropdown_year = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlYear")
-num_options_year = len(dropdown_year.find_elements_by_tag_name("option"))
-# Nested for-loops to try every possible combination of the options in the 8 dropdowns
-for index_year in range(0, num_options_year):
-    try:
-        # Need to click the current year because the other dropdown options change based on this
-        dropdown_year = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlYear")
-        dropdown_year.find_elements_by_tag_name('option')[index_year].click()
+def count(driver, index_year):
+    driver.get("http://agcensus.dacnet.nic.in/DistCharacteristic.aspx")
+    counter = 0
+    # Need to click the current year because the other dropdown options change based on this
+    dropdown_year = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlYear")
+    dropdown_year.find_elements_by_tag_name('option')[index_year].click()
 
-        dropdown_social_group = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlSocialGroup")
-        # We only want the option with "ALL SOCIAL GROUPS" for this project
-        all_social_groups_index = findIndexByText(dropdown_social_group, 'ALL SOCIAL GROUPS')
-        dropdown_social_group.find_elements_by_tag_name('option')[all_social_groups_index].click()
+    dropdown_social_group = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlSocialGroup")
+    # We only want the option with "ALL SOCIAL GROUPS" for this project
+    all_social_groups_index = findIndexByText(dropdown_social_group, 'ALL SOCIAL GROUPS')
+    dropdown_social_group.find_elements_by_tag_name('option')[all_social_groups_index].click()
 
-        dropdown_state = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlState")
-        num_options_state = len(dropdown_state.find_elements_by_tag_name("option"))
-    except UnexpectedAlertPresentException:
-        alert = driver.switch_to.alert
-        alert.accept()
-        continue
+    dropdown_state = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlState")
+    num_options_state = len(dropdown_state.find_elements_by_tag_name("option"))
 
     for index_state in range(0, num_options_state):
         try:
@@ -141,6 +147,10 @@ for index_year in range(0, num_options_year):
                 alert = driver.switch_to.alert
                 alert.accept()
                 continue
+    print('There are this many unique combinations: ' + str(counter))
 
-print('There are this many unique combinations: ' + str(counter))
+# driver = webdriver.Chrome(chrome_options=chrome_options)
+# driver.set_page_load_timeout(60)
+
+
 
