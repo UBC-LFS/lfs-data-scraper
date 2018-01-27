@@ -108,7 +108,7 @@ if __name__ == '__main__':
     processes = []
 
     for year in range(0, 4):
-        p = Process(target=p, args=(year,))
+        p = Process(target=count, args=(year,))
         p.start()
         processes.append(p)
         # seems like we need to stagger the spawning of processes for all the browsers to load the initial page properly
