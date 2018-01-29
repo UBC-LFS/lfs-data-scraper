@@ -1,29 +1,22 @@
-let fs = require('fs')
-let xlsx = require('node-xlsx')
+const fs = require('fs')
+const xlsx = require('node-xlsx')
 let dir = fs.readdirSync(__dirname + '/data/')
 
 // filter out .xlsx files
-dir = dir.filter(function (a) {
-  return a.includes('.xlsx')
-})
+dir = dir.filter(file => file.includes('.xlsx'))
 
 dir.forEach(file => {
-  let xlsxObj = xlsx.parse(__dirname + '/data/' + file)
+  const xlsxObj = xlsx.parse(__dirname + '/data/' + file)
   let rows = []
-  xlsxObj.map(function (sheet) {
+  xlsxObj.map(sheet => {
         // loop through all rows in the sheet and extract it
-    sheet.data.map(function (j) {
-      rows.push(j)
-    })
+    sheet.data.map(row => rows.push(row))
     let writeStr = ''
-    rows.map(function (s) {
-      writeStr += s.join(',') + '\n'
-    })
+    rows.map(s => (writeStr += s.join(',') + '\n'))
     fs.writeFile(__dirname + '/dataCsv/' + file.split('.')[0] + '.csv', writeStr, err => {
       if (err) {
-        return console.log(err)
-      }
-      console.log(file + ' was saved in the current directory!')
+        console.log(err)
+      } else console.log(file + ' was saved in the current directory!')
     })
   })
 })
