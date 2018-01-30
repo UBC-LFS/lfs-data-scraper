@@ -20,8 +20,6 @@ chrome_options.add_argument('--dns-prefetch-disable')
 
 num_threads = 4
 
-file = open('./mapping.txt', 'w')
-
 
 def configureDropdowns(driver, options):
     """
@@ -54,10 +52,6 @@ def findIndexByText(dropdownElement, text):
             return i
     raise Exception('No option with text: ' + text + ' was found')
 
-
-def count(driver, index_year):
-    driver.get("http://agcensus.dacnet.nic.in/DistCharacteristic.aspx")
-    counter = 0
 
 def count(index_year):
     chrome_options = Options()
@@ -121,10 +115,6 @@ def count(index_year):
                 alert.accept()
                 continue
     print('There are this many unique combinations: ' + str(counter))
-
-driver = webdriver.Chrome(chrome_options=chrome_options)
-driver.set_page_load_timeout(60)
-count(driver,0)
 
 if __name__ == '__main__':
     processes = []
