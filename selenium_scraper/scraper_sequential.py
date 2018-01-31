@@ -25,6 +25,7 @@ def submitForm(driver, counter, downloadDir):
     # Download the data as a CSV
     button_save = driver.find_element_by_xpath('//*[@id="ReportViewer1__ctl5__ctl4__ctl0_ButtonImg"]')
     button_save.click()
+    time.sleep(1)
     button_excel = driver.find_element_by_xpath('//*[@id="ReportViewer1__ctl5__ctl4__ctl0_Menu"]/div[5]/a')
     button_excel.click()
 
@@ -165,8 +166,9 @@ def downloadFiles(index_year, rootDir):
                                 submitForm(driver, counter, downloadDir)
                                 counter += 1
                                 break
-                            except (NoSuchElementException, TimeoutException) as e:
+                            except Exception as e:
                                 # Keep trying the same configuration
+                                print(e)
                                 continue
                         # Okay.. current configuration isn't working. Stop trying and move onto the next.
                         continue
