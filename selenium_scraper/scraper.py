@@ -10,16 +10,14 @@ log = logging.getLogger('scraper_log')
 logging.basicConfig(level=logging.INFO, filename='./scraper.log')
 log.setLevel(logging.INFO)
 
-def submitForm(driver, year, counter):
+
+def submitForm(driver, counter, downloadDir):
     """
-    this function submits the form and saves the results as an excel file
-    :param year: index of the option in the year dropdown
-    :param socialGroup: index of the option in the social group dropdown
-    :param state: index of the option in the state dropdown
-    :param district: index of the option in the district dropdown
-    :param tables: index of the option in the tables dropdown
-    :param crops: index of the option in the crops dropdown
-    :return: None
+    This function clicks the "submit" button and downloads the excel spreadsheet from the resulting page
+    :param driver: the webdriver to download from
+    :param counter: the index of the current unique dropdown configuration
+    :param downloadDir: download directory of the current webdriver
+    :return:
     """
     button_submit = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_btnSubmit")
     button_submit.click()
@@ -31,12 +29,11 @@ def submitForm(driver, year, counter):
     button_excel.click()
 
     # Rename the file so OS doesn't interrupt
-    old_file = os.path.join('C:\\Users\\eric\\Downloads', 'DistTableDisplay6b.xlsx')
+    old_file = os.path.join(downloadDir, 'DistTableDisplay6b.xlsx')
     while not os.path.exists(old_file):
         time.sleep(1)
-    new_file = os.path.join('C:\\Users\\eric\\Downloads', 'DistTableDisplay6b - ' + str(year) + '-' + str(counter) + '.xlsx')
+    new_file = os.path.join(downloadDir, 'DistTableDisplay6b - ' + str(counter) + '.xlsx')
     os.rename(old_file, new_file)
-    counter += 1
 
     # Click back button to go to main page
     button_back = driver.find_element_by_id("btnBack")
@@ -74,14 +71,18 @@ def findIndexByText(dropdownElement, text):
     raise Exception('No option with text: ' + text + ' was found')
 
 
-def count(index_year):
+def count(index_year, rootDir):
     chrome_options = Options()
+    # This option fixes a problem with timeout exceptions not being thrown after the limit has been reached
     chrome_options.add_argument('--dns-prefetch-disable')
+    # Makes a new download directory for each process
+    downloadDir = os.path.join(rootDir, str(index_year))
+    prefs = {'download.default_directory' : downloadDir}
+    chrome_options.add_experimental_option('prefs', prefs)
     driver = webdriver.Chrome(options=chrome_options)
     driver.set_page_load_timeout(60)
     driver.get("http://agcensus.dacnet.nic.in/DistCharacteristic.aspx")
     counter = 0
-    file = open('./mapping-' + str(index_year) + '.txt', 'w')
     # Need to click the current year because the other dropdown options change based on this
     dropdown_year = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlYear")
     dropdown_year.find_elements_by_tag_name('option')[index_year].click()
@@ -129,7 +130,8 @@ def count(index_year):
                     # we move on to the next one
                     try:
                         options = configureDropdowns(driver, dropdown_input)
-                        submitForm(driver, index_year, counter)
+                        submitForm(driver, counter, downloadDir)
+                        counter += 1
 
                     except Exception as e:
                         # If configureDropdowns failed, then options will be null
@@ -154,40 +156,28 @@ def count(index_year):
                             try:
                                 driver.get("http://agcensus.dacnet.nic.in/DistCharacteristic.aspx")
                                 configureDropdowns(driver, dropdown_input)
-                                submitForm(driver, index_year, counter)
+                                submitForm(driver, counter, downloadDir)
+                                counter += 1
                                 break
                             except (NoSuchElementException, TimeoutException) as e:
                                 # Keep trying the same configuration
                                 continue
                         # Okay.. current configuration isn't working. Stop trying and move onto the next.
                         continue
-
-                dropdown_input = [('_ctl0_ContentPlaceHolder1_ddlYear', index_year),
-                                  ('_ctl0_ContentPlaceHolder1_ddlSocialGroup', all_social_groups_index),
-                                  ('_ctl0_ContentPlaceHolder1_ddlState', index_state),
-                                  ('_ctl0_ContentPlaceHolder1_ddlDistrict', index_district),
-                                  ('_ctl0_ContentPlaceHolder1_ddlTables', cropping_pattern_table_index)]
-                # If anything in this try block fails, we will re-try the same configuration up to 3 times before
-                # we move on to the next one
-                options = configureDropdowns(driver, dropdown_input)
-                for i in range(0, num_options_crops):
-                    file.write(str(index_year) + ',' + str(all_social_groups_index) + ',' + str(index_state) +
-                               ',' + str(index_district) + ',' + str(cropping_pattern_table_index) +
-                               ',' + str(i) + '\n')
-                counter += num_options_crops
-                print(str(counter))
             except UnexpectedAlertPresentException:
                 print("caught error")
                 alert = driver.switch_to.alert
                 alert.accept()
                 continue
-    print('There are this many unique combinations: ' + str(counter))
 
 if __name__ == '__main__':
     processes = []
+    rootDir = input('Specify root directory to download files to (defaults to current directory): ')
+    if not rootDir:
+        rootDir = os.getcwd()
 
     for year in range(0, 4):
-        p = Process(target=count, args=(year,))
+        p = Process(target=count, args=(year, rootDir))
         p.start()
         processes.append(p)
         # seems like we need to stagger the spawning of processes for all the browsers to load the initial page properly
