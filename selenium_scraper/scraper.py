@@ -71,7 +71,13 @@ def findIndexByText(dropdownElement, text):
     raise Exception('No option with text: ' + text + ' was found')
 
 
-def count(index_year, rootDir):
+def downloadFiles(index_year, rootDir):
+    """
+    Function to download files from agcensus website
+    :param index_year: index of the year dropdown
+    :param rootDir: folder to download files to
+    :return:
+    """
     chrome_options = Options()
     # This option fixes a problem with timeout exceptions not being thrown after the limit has been reached
     chrome_options.add_argument('--dns-prefetch-disable')
@@ -80,7 +86,7 @@ def count(index_year, rootDir):
     prefs = {'download.default_directory' : downloadDir}
     chrome_options.add_experimental_option('prefs', prefs)
     driver = webdriver.Chrome(options=chrome_options)
-    driver.set_page_load_timeout(60)
+    driver.set_page_load_timeout(15)
     driver.get("http://agcensus.dacnet.nic.in/DistCharacteristic.aspx")
     counter = 0
     # Need to click the current year because the other dropdown options change based on this
@@ -177,7 +183,7 @@ if __name__ == '__main__':
         rootDir = os.getcwd()
 
     for year in range(0, 4):
-        p = Process(target=count, args=(year, rootDir))
+        p = Process(target=downloadFiles, args=(year, rootDir))
         p.start()
         processes.append(p)
         # seems like we need to stagger the spawning of processes for all the browsers to load the initial page properly
