@@ -72,7 +72,7 @@ def findIndexByText(dropdownElement, text):
     raise Exception('No option with text: ' + text + ' was found')
 
 
-def downloadFiles(index_year, rootDir):
+def downloadFiles(index_year, rootDir, state_start, district_start, crop_start):
     """
     Function to download files from agcensus website
     :param index_year: index of the year dropdown
@@ -102,7 +102,7 @@ def downloadFiles(index_year, rootDir):
     dropdown_state = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlState")
     num_options_state = len(dropdown_state.find_elements_by_tag_name("option"))
 
-    for index_state in range(0, num_options_state):
+    for index_state in range(state_start, num_options_state):
         try:
             dropdown_state = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlState")
             dropdown_state.find_elements_by_tag_name('option')[index_state].click()
@@ -114,7 +114,7 @@ def downloadFiles(index_year, rootDir):
             alert.accept()
             continue
 
-        for index_district in range(0, num_options_district):
+        for index_district in range(district_start, num_options_district):
             try:
                 dropdown_district = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlDistrict")
                 dropdown_district.find_elements_by_tag_name('option')[index_district].click()
@@ -125,7 +125,7 @@ def downloadFiles(index_year, rootDir):
                 dropdown_crops = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlCrop")
                 num_options_crops = len(dropdown_crops.find_elements_by_tag_name('option'))
 
-                for index_crops in range(0, num_options_crops):
+                for index_crops in range(crop_start, num_options_crops):
 
                     dropdown_input = [('_ctl0_ContentPlaceHolder1_ddlYear', index_year),
                                       ('_ctl0_ContentPlaceHolder1_ddlSocialGroup', all_social_groups_index),
@@ -139,6 +139,9 @@ def downloadFiles(index_year, rootDir):
                         options = configureDropdowns(driver, dropdown_input)
                         submitForm(driver, counter, downloadDir)
                         counter += 1
+                        log.info('successfully downloaded configuration: ' + str(index_year) + '-' + str(all_social_groups_index) + '-' +
+                                 str(index_state) + '-' + str(index_district) + '-' + str(cropping_pattern_table_index)
+                                 + '-' + str(index_crops))
 
                     except Exception as e:
                         # If configureDropdowns failed, then options will be null
@@ -183,5 +186,14 @@ rootDir = input('Specify root directory to download files to (defaults to curren
 if not rootDir:
     rootDir = os.getcwd()
 year = input('Specify the index of the year to download files from. Must be a number between 0-3: ')
-downloadFiles(int(year), rootDir)
+config = input('Specify the indices of the state, district, and crop separated by commas (optional): ')
+if not config:
+    state_start = 0
+    district_start = 0
+    crop_start = 0
+else:
+    state_start = config.split(',')[0];
+    district_start = config.split(',')[1];
+    crop_start = config.split(',')[2];
+downloadFiles(int(year), rootDir, int(state_start), int(district_start), int(crop_start))
 
