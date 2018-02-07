@@ -11,9 +11,10 @@ dir.forEach(inputPath => {
         crop: '',
         state: '',
         district: '',
+        class: [],
         numberOfHoldings: [],
         irrigatedArea: [],
-        unIrrigatedArea: [],
+        UnirrigatedArea: [],
         totalArea: [],
     };
   fs.readFile(__dirname + '/dataCsv/' + inputPath, (err, fileData) => {
@@ -25,14 +26,12 @@ dir.forEach(inputPath => {
       finalData.state = getLastElement(data[0][0]);
       finalData.district = getLastElement(data[2][0]);
       for (let i = 8; i <= 23; i++) {
-        // push data if exists
+          finalData.class.push(data[i][data[6].indexOf('Sl No')]);
         finalData.numberOfHoldings.push(data[i][data[6].indexOf('No. of Holdings')]);
         finalData.irrigatedArea.push(data[i][data[6].indexOf('Irrigated Area')]);
-        finalData.unIrrigatedArea.push(data[i][data[6].indexOf('Unirrigated Area')]);
+        finalData.UnirrigatedArea.push(data[i][data[6].indexOf('Unirrigated Area ')]);
         finalData.totalArea.push(data[i][data[6].indexOf('Total Area')]);
       }
-
-      console.log(finalData)
     })
   })
 });

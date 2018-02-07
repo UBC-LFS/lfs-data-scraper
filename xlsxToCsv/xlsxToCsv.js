@@ -7,11 +7,11 @@ dir = dir.filter(file => file.includes('.xlsx'))
 
 dir.forEach(file => {
   const xlsxObj = xlsx.parse(__dirname + '/data/' + file)
-  let rows = []
+  let rows = [];
   xlsxObj.map(sheet => {
         // loop through all rows in the sheet and extract it
     sheet.data.map(row => rows.push(row))
-    let writeStr = ''
+    let writeStr = '';
     rows.map(s => (writeStr += s.join(',') + '\n'))
     fs.writeFile(__dirname + '/dataCsv/' + file.split('.')[0] + '.csv', writeStr, err => {
       if (err) {
