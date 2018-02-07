@@ -77,6 +77,9 @@ def downloadFiles(index_year, rootDir, state_start, district_start, crop_start):
     Function to download files from agcensus website
     :param index_year: index of the year dropdown
     :param rootDir: folder to download files to
+    :param state_start: index of state dropdown to start from
+    :param district_start: index of district dropdown to start from
+    :param crop_start: index of crop dropdown to start from
     :return:
     """
     chrome_options = Options()
@@ -114,7 +117,12 @@ def downloadFiles(index_year, rootDir, state_start, district_start, crop_start):
             alert.accept()
             continue
 
-        for index_district in range(district_start, num_options_district):
+        # If the outer loop's index is equal to the user-specified district to begin at, start from user-specified
+        # district. Otherwise, we start from 0
+        district_loop_start = 0
+        if index_state == state_start:
+            district_loop_start = district_start
+        for index_district in range(district_loop_start, num_options_district):
             try:
                 dropdown_district = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlDistrict")
                 dropdown_district.find_elements_by_tag_name('option')[index_district].click()
@@ -125,7 +133,10 @@ def downloadFiles(index_year, rootDir, state_start, district_start, crop_start):
                 dropdown_crops = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlCrop")
                 num_options_crops = len(dropdown_crops.find_elements_by_tag_name('option'))
 
-                for index_crops in range(crop_start, num_options_crops):
+                crop_loop_start = 0
+                if index_district == district_start:
+                    crop_loop_start = crop_start
+                for index_crops in range(crop_loop_start, num_options_crops):
 
                     dropdown_input = [('_ctl0_ContentPlaceHolder1_ddlYear', index_year),
                                       ('_ctl0_ContentPlaceHolder1_ddlSocialGroup', all_social_groups_index),
@@ -139,9 +150,9 @@ def downloadFiles(index_year, rootDir, state_start, district_start, crop_start):
                         options = configureDropdowns(driver, dropdown_input)
                         submitForm(driver, counter, downloadDir)
                         counter += 1
-                        log.info('successfully downloaded configuration: ' + str(index_year) + '-' + str(all_social_groups_index) + '-' +
-                                 str(index_state) + '-' + str(index_district) + '-' + str(cropping_pattern_table_index)
-                                 + '-' + str(index_crops))
+                        log.info('successfully downloaded configuration: y' + str(index_year) + '-sg' + str(all_social_groups_index) + '-s' +
+                                 str(index_state) + '-d' + str(index_district) + '-t' + str(cropping_pattern_table_index)
+                                 + '-c' + str(index_crops))
 
                     except Exception as e:
                         # If configureDropdowns failed, then options will be null
@@ -186,6 +197,7 @@ rootDir = input('Specify root directory to download files to (defaults to curren
 if not rootDir:
     rootDir = os.getcwd()
 year = input('Specify the index of the year to download files from. Must be a number between 0-3: ')
+# The ONLY use for this should be to carry on where we left off when a script fails
 config = input('Specify the indices of the state, district, and crop separated by commas (optional): ')
 if not config:
     state_start = 0
