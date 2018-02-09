@@ -1,4 +1,4 @@
-const fs = require('fs')
+const fs = require('fs');
 let dir = fs.readdirSync(__dirname + '/dataCsv/');
 const parse = require('csv-parse');
 const assert = require('assert');
