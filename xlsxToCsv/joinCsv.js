@@ -26,14 +26,16 @@ dir.forEach(inputPath => {
       finalData.state = getLastElement(data[0][0]);
       finalData.district = getLastElement(data[2][0]);
       for (let i = 8; i <= 23; i++) {
-          finalData.class.push(data[i][data[6].indexOf('Sl No')]);
-        finalData.numberOfHoldings.push(data[i][data[6].indexOf('No. of Holdings')]);
-        finalData.irrigatedArea.push(data[i][data[6].indexOf('Irrigated Area')]);
-        finalData.UnirrigatedArea.push(data[i][data[6].indexOf('Unirrigated Area ')]);
-        finalData.totalArea.push(data[i][data[6].indexOf('Total Area')]);
+        finalData.class.push(data[i][getFilteredColumn(data[6],'Sl')]);
+        finalData.numberOfHoldings.push(data[i][getFilteredColumn(data[6],'Holdings')]);
+        finalData.irrigatedArea.push(data[i][getFilteredColumn(data[6],'Irrigated')]);
+        finalData.UnirrigatedArea.push(data[i][getFilteredColumn(data[6],'Unirrigated')]);
+        finalData.totalArea.push(data[i][getFilteredColumn(data[6],'Total')]);
       }
     })
   })
 });
 
 const getLastElement = (s) => s.split('CROP ')[1];
+
+const getFilteredColumn = (arr, s) => arr.indexOf(arr.filter((x) => x.includes(s))[0]);
