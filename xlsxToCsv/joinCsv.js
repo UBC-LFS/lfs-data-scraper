@@ -32,8 +32,20 @@ dir.forEach(inputPath => {
         finalData.UnirrigatedArea.push(data[i][getFilteredColumn(data[6],'Unirrigated')]);
         finalData.totalArea.push(data[i][getFilteredColumn(data[6],'Total')]);
       }
-    })
-  })
+
+      let rowsToDelete = finalData.class.reduce(
+          (acc, cur, i) => {
+              if (cur === ' ')
+                  return [...acc, i];
+              else {
+                  return acc;
+              }
+          }, []);
+
+      // TODO: rm these rows from finalData
+    });
+
+  });
 });
 
 const getLastElement = (s) => s.split('CROP ')[1];
