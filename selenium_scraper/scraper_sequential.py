@@ -183,7 +183,6 @@ def downloadFiles(index_year, rootDir, state_start, district_start, crop_start):
                                 driver.get("http://agcensus.dacnet.nic.in/DistCharacteristic.aspx")
                                 configureDropdowns(driver, dropdown_input)
                                 submitForm(driver, counter, downloadDir)
-                                counter += 1
                                 break
                             except Exception as e:
                                 # Keep trying the same configuration
