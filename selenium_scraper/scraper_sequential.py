@@ -8,10 +8,10 @@ import os
 
 log = logging.getLogger('scraper_log')
 logging.basicConfig(level=logging.INFO, filename='./scraper.log')
-log.setLevel(logging.INFO)
+log.setLevel(logging.DEBUG)
 
 
-def submitForm(driver, counter, downloadDir):
+def submitForm(driver, year, state, district, crop, downloadDir):
     """
     This function clicks the "submit" button and downloads the excel spreadsheet from the resulting page
     :param driver: the webdriver to download from
@@ -33,7 +33,7 @@ def submitForm(driver, counter, downloadDir):
     old_file = os.path.join(downloadDir, 'DistTableDisplay6b.xlsx')
     while not os.path.exists(old_file):
         time.sleep(1)
-    new_file = os.path.join(downloadDir, 'DistTableDisplay6b - ' + str(counter) + '.xlsx')
+    new_file = os.path.join(downloadDir, 'DistTableDisplay6b - ' + year + '-' + state + '-' + district + '-' + crop + '.xlsx')
     os.rename(old_file, new_file)
 
     # Click back button to go to main page
@@ -92,7 +92,6 @@ def downloadFiles(index_year, rootDir, state_start, district_start, crop_start):
     driver = webdriver.Chrome(options=chrome_options)
     driver.set_page_load_timeout(15)
     driver.get("http://agcensus.dacnet.nic.in/DistCharacteristic.aspx")
-    counter = 0
     # Need to click the current year because the other dropdown options change based on this
     dropdown_year = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlYear")
     dropdown_year.find_elements_by_tag_name('option')[index_year].click()
@@ -148,8 +147,14 @@ def downloadFiles(index_year, rootDir, state_start, district_start, crop_start):
                     # we move on to the next one
                     try:
                         options = configureDropdowns(driver, dropdown_input)
-                        submitForm(driver, counter, downloadDir)
-                        counter += 1
+                        submitForm(driver, str(index_year), str(index_state), str(index_district), str(index_crops),
+                                   downloadDir)
+                        global _state_start
+                        _state_start = index_state
+                        global _district_start
+                        _district_start = index_district
+                        global _crop_start
+                        _crop_start = index_crops + 1
                         log.info('successfully downloaded configuration: y' + str(index_year) + '-sg' + str(all_social_groups_index) + '-s' +
                                  str(index_state) + '-d' + str(index_district) + '-t' + str(cropping_pattern_table_index)
                                  + '-c' + str(index_crops))
@@ -185,7 +190,7 @@ def downloadFiles(index_year, rootDir, state_start, district_start, crop_start):
                                 print(e)
                                 continue
                         # Okay.. current configuration isn't working. Stop trying and move onto the next.
-                        continue
+                        raise Exception
             except UnexpectedAlertPresentException:
                 print("caught error")
                 alert = driver.switch_to.alert
@@ -200,12 +205,20 @@ year = input('Specify the index of the year to download files from. Must be a nu
 # The ONLY use for this should be to carry on where we left off when a script fails
 config = input('Specify the indices of the state, district, and crop separated by commas (optional): ')
 if not config:
-    state_start = 0
-    district_start = 0
-    crop_start = 0
+    _state_start = 0
+    _district_start = 0
+    _crop_start = 0
 else:
-    state_start = config.split(',')[0];
-    district_start = config.split(',')[1];
-    crop_start = config.split(',')[2];
-downloadFiles(int(year), rootDir, int(state_start), int(district_start), int(crop_start))
+    _state_start = config.split(',')[0];
+    _district_start = config.split(',')[1];
+    _crop_start = config.split(',')[2];
+
+
+while True:
+    try:
+        downloadFiles(int(year), rootDir, int(_state_start), int(_district_start), int(_crop_start))
+        break
+    except:
+        log.debug('downloadFiles failed, continuing from where it failed')
+        continue
 
