@@ -177,6 +177,7 @@ def downloadFiles(index_year, rootDir, state_start, district_start, crop_start):
                                       'District index: ' + str(index_district) + '\n' +
                                       'Table index: ' + str(cropping_pattern_table_index) + '\n' +
                                       'Crop index: ' + str(index_crops) + '\n')
+                        log.debug(e)
                         for i in range(0, 2):
                             # Retry up to 3 more times. First success breaks out of for-loop
                             try:
