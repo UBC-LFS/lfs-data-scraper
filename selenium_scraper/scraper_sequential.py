@@ -222,4 +222,4 @@ while True:
     except:
         log.debug('downloadFiles failed, continuing from where it failed')
         continue
-
+log.info('Wow we finished downloading everything')
