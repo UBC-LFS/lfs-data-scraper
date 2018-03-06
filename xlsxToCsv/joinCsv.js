@@ -1,5 +1,5 @@
 const fs = require('fs');
-let dir = fs.readdirSync(__dirname + '/dataCsv/');
+let dir = fs.readdirSync(__dirname + '/csv/');
 const { promisify } = require('util')
 const parse = require('csv-parse');
 const assert = require('assert');
@@ -24,7 +24,7 @@ const writeHeader = async () => {
 const readCSVs = async dir => {
     writeHeader()
     dir.forEach(async inputPath => {
-        const file = await fsReadFile(__dirname + '/dataCsv/' + inputPath)
+        const file = await fsReadFile(__dirname + '/csv/' + inputPath);
         parse(file, {relax_column_count: true}, (err, data) => {
             assert.equal(null, err);
             const year = data[2][1];
@@ -33,27 +33,17 @@ const readCSVs = async dir => {
             const district = data[4][2].split(': ')[1];
             for (let i = 8; i <= 23; i++) {
               const sl = data[i][getFilteredColumn(data[6],'Sl')];
-              const holdings = data[i][getFilteredColumn(data[6],'Holdings')]
-              const irrigated = data[i][getFilteredColumn(data[6],'Irrigated')]
-              const unirrigated = data[i][getFilteredColumn(data[6],'Unirrigated')]
-              const total = data[i][getFilteredColumn(data[6],'Total')]
-              appendCSV([year, crop, state, district, sl, holdings, irrigated, unirrigated, total])
+              const holdings = data[i][getFilteredColumn(data[6],'Holdings')];
+              const irrigated = data[i][getFilteredColumn(data[6],'Irrigated')];
+              const unirrigated = data[i][getFilteredColumn(data[6],'Unirrigated')];
+              const total = data[i][getFilteredColumn(data[6],'Total')];
+              appendCSV([year, crop, state, district, sl, holdings, irrigated, unirrigated, total]);
             }
-      
-            // let rowsToDelete = finalData.class.reduce(
-            //     (acc, cur, i) => {
-            //         if (cur === ' ')
-            //             return [...acc, i];
-            //         else {
-            //             return acc;
-            //         }
-            //     }, []);
-            // call writefile
-          });
+        });
     })
 }
 
-readCSVs(dir)
+readCSVs(dir);
 
 const getLastElement = s => s.split('CROP ')[1];
 
