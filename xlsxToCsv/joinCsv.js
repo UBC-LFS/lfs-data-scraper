@@ -1,6 +1,6 @@
 const fs = require('fs');
 let dir = fs.readdirSync(__dirname + '/dataCsv/');
-const promisify = require('util')
+const { promisify } = require('util')
 const parse = require('csv-parse');
 const assert = require('assert');
 
@@ -8,103 +8,53 @@ const fsWriteFile = promisify(fs.writeFile)
 const fsReadFile = promisify(fs.readFile)
 const fsAppendFile = promisify(fs.appendFile)
 
+const outputName = 'output.csv'
+
 dir = dir.filter(file => file.includes('.csv'));
 
-const writeCSV = async obj => {
-    const header = ['fd', 'dfsxvx']
-    await fsWriteFile(__dirname + '/dataCsv/' + '', header)
-    // flatten obj into array 
-    await fsWriteFile(__dirname + '/dataCsv/' + '', obj)
+const appendCSV = async obj => {
+    await fsAppendFile(__dirname + '/output/' + outputName, obj + '\r\n')
+}
+
+const writeHeader = async () => {
+    const header = ['Year', 'Crop', 'State', 'District', 'Class / SI Name', 'Number of Holdings', 'Irrigated Area', 'Unirrigated Area', 'Total Area'];
+    await fsWriteFile(__dirname + '/output/' + outputName, header + '\r\n')
 }
 
 const readCSVs = async dir => {
+    writeHeader()
     dir.forEach(async inputPath => {
-        let finalData = {
-            year: '',
-            crop: '',
-            state: '',
-            district: '',
-            class: [],
-            numberOfHoldings: [],
-            irrigatedArea: [],
-            UnirrigatedArea: [],
-            totalArea: [],
-        }
         const file = await fsReadFile(__dirname + '/dataCsv/' + inputPath)
-
         parse(file, {relax_column_count: true}, (err, data) => {
             assert.equal(null, err);
-            finalData.year = data[2][1];
-            finalData.crop = getLastElement(data[3][0]);
-            finalData.state = getLastElement(data[0][0]);
-            finalData.district = getLastElement(data[2][0]);
+            const year = data[2][1];
+            const crop = getLastElement(data[3][0]);
+            const state = data[4][0].split(': ')[1];
+            const district = data[4][2].split(': ')[1];
             for (let i = 8; i <= 23; i++) {
-              finalData.class.push(data[i][getFilteredColumn(data[6],'Sl')]);
-              finalData.numberOfHoldings.push(data[i][getFilteredColumn(data[6],'Holdings')]);
-              finalData.irrigatedArea.push(data[i][getFilteredColumn(data[6],'Irrigated')]);
-              finalData.UnirrigatedArea.push(data[i][getFilteredColumn(data[6],'Unirrigated')]);
-              finalData.totalArea.push(data[i][getFilteredColumn(data[6],'Total')]);
+              const sl = data[i][getFilteredColumn(data[6],'Sl')];
+              const holdings = data[i][getFilteredColumn(data[6],'Holdings')]
+              const irrigated = data[i][getFilteredColumn(data[6],'Irrigated')]
+              const unirrigated = data[i][getFilteredColumn(data[6],'Unirrigated')]
+              const total = data[i][getFilteredColumn(data[6],'Total')]
+              appendCSV([year, crop, state, district, sl, holdings, irrigated, unirrigated, total])
             }
       
-            let rowsToDelete = finalData.class.reduce(
-                (acc, cur, i) => {
-                    if (cur === ' ')
-                        return [...acc, i];
-                    else {
-                        return acc;
-                    }
-                }, []);
-            console.log(finalData)
+            // let rowsToDelete = finalData.class.reduce(
+            //     (acc, cur, i) => {
+            //         if (cur === ' ')
+            //             return [...acc, i];
+            //         else {
+            //             return acc;
+            //         }
+            //     }, []);
             // call writefile
           });
     })
 }
 
+readCSVs(dir)
 
-
-// dir.forEach(inputPath => {
-//     let finalData = {
-//         year: '',
-//         crop: '',
-//         state: '',
-//         district: '',
-//         class: [],
-//         numberOfHoldings: [],
-//         irrigatedArea: [],
-//         UnirrigatedArea: [],
-//         totalArea: [],
-//     };
-//   fs.readFile(__dirname + '/dataCsv/' + inputPath, (err, fileData) => {
-//     assert.equal(null, err);
-//     parse(fileData, {relax_column_count: true}, (err, data) => {
-//       assert.equal(null, err);
-//       finalData.year = data[2][1];
-//       finalData.crop = getLastElement(data[3][0]);
-//       finalData.state = getLastElement(data[0][0]);
-//       finalData.district = getLastElement(data[2][0]);
-//       for (let i = 8; i <= 23; i++) {
-//         finalData.class.push(data[i][getFilteredColumn(data[6],'Sl')]);
-//         finalData.numberOfHoldings.push(data[i][getFilteredColumn(data[6],'Holdings')]);
-//         finalData.irrigatedArea.push(data[i][getFilteredColumn(data[6],'Irrigated')]);
-//         finalData.UnirrigatedArea.push(data[i][getFilteredColumn(data[6],'Unirrigated')]);
-//         finalData.totalArea.push(data[i][getFilteredColumn(data[6],'Total')]);
-//       }
-
-//       let rowsToDelete = finalData.class.reduce(
-//           (acc, cur, i) => {
-//               if (cur === ' ')
-//                   return [...acc, i];
-//               else {
-//                   return acc;
-//               }
-//           }, []);
-//         console.log(finalData)
-//       // TODO: rm these rows from finalData
-//     });
-
-//   });
-// });
-
-const getLastElement = (s) => s.split('CROP ')[1];
+const getLastElement = s => s.split('CROP ')[1];
 
 const getFilteredColumn = (arr, s) => arr.indexOf(arr.filter((x) => x.toLowerCase().includes(s.toLowerCase()))[0]);
