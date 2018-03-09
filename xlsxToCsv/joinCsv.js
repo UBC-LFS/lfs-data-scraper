@@ -12,7 +12,7 @@ const stream = fs.createWriteStream(__dirname + '/output/' + outputName, {flags:
 dir = dir.filter(file => file.includes('.csv'))
 
 const writeHeader = async () => {
-  const header = ['Year', 'Crop', 'State', 'District', 'Class / SI Name', 'Number of Holdings', 'Irrigated Area', 'Unirrigated Area', 'Total Area']
+  const header = ['Year', 'Crop', 'State', 'District', 'Class / SI Name', 'Number of Holdings', 'Irrigated Area', 'Unirrigated Area', 'Total Area', 'File Name']
   await fsWriteFile(__dirname + '/output/' + outputName, header + '\r\n')
 }
 
@@ -32,7 +32,7 @@ const readCSVs = async dir => {
         const irrigated = data[i][getFilteredColumn(data[6], 'Irrigated')]
         const unirrigated = data[i][getFilteredColumn(data[6], 'Unirrigated')]
         const total = data[i][getFilteredColumn(data[6], 'Total')]
-        stream.write([year, crop, state, district, sl, holdings, irrigated, unirrigated, total] + '\r\n')
+        stream.write([year, crop, state, district, sl, holdings, irrigated, unirrigated, total, inputPath] + '\r\n')
       };
     })
   })
