@@ -185,6 +185,9 @@ def downloadFiles(index_year, rootDir, state_start, district_start, crop_start):
                                 configureDropdowns(driver, dropdown_input)
                                 submitForm(driver, str(index_year), str(index_state), str(index_district),
                                            str(index_crops), downloadDir)
+                                _state_start = index_state
+                                _district_start = index_district
+                                _crop_start = index_crops + 1
                                 break
                             except Exception as e:
                                 # Keep trying the same configuration
