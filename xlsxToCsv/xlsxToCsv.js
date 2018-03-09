@@ -16,7 +16,7 @@ dir.forEach(file => {
     fs.writeFile(__dirname + '/csv/' + file.split('.')[0] + '.csv', writeStr, err => {
       if (err) {
         console.log(err)
-      } else console.log(file + ' was saved in the current directory!')
+      }
     })
   })
 })
