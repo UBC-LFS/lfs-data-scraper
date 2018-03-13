@@ -20,8 +20,12 @@ const puppeteer = require('puppeteer');
 
   // const year = await page1.select('#_ctl0_ContentPlaceHolder1_ddlYear')
   await page1.evaluate(() => {
-    const yearElement = document.getElementById('_ctl0_ContentPlaceHolder1_ddlYear').children
-    console.log(yearElement)
-    return yearElement
+    document.getElementById('_ctl0_ContentPlaceHolder1_ddlYear').selectedIndex = 3
   })
+
+  await page1.evaluate(() => {
+    document.getElementById('_ctl0_ContentPlaceHolder1_ddlTables').selectedIndex = 7
+  })
+
+  await page1.click('#_ctl0_ContentPlaceHolder1_btnSubmit')
 })()
