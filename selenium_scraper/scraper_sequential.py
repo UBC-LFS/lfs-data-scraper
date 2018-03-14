@@ -226,7 +226,8 @@ while True:
     try:
         downloadFiles(int(year), rootDir, int(_state_start), int(_district_start), int(_crop_start))
         break
-    except:
+    except Exception as e:
+        print(e)
         log.debug('downloadFiles failed, continuing from where it failed')
         continue
 log.info('Wow we finished downloading everything')
