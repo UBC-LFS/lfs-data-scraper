@@ -19,6 +19,11 @@ def submitForm(driver, year, state, district, crop, downloadDir):
     :param downloadDir: download directory of the current webdriver
     :return:
     """
+    new_file = os.path.join(downloadDir,
+                            'DistTableDisplay6b - ' + year + '-' + state + '-' + district + '-' + crop + '.xlsx')
+    # If the file is already in the data folder, don't try to download
+    if os.path.exists(new_file):
+        return
     button_submit = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_btnSubmit")
     button_submit.click()
 
@@ -33,7 +38,6 @@ def submitForm(driver, year, state, district, crop, downloadDir):
     old_file = os.path.join(downloadDir, 'DistTableDisplay6b.xlsx')
     while not os.path.exists(old_file):
         time.sleep(1)
-    new_file = os.path.join(downloadDir, 'DistTableDisplay6b - ' + year + '-' + state + '-' + district + '-' + crop + '.xlsx')
     os.rename(old_file, new_file)
 
     # Click back button to go to main page
