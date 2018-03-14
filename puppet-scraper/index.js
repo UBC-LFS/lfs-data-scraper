@@ -1,31 +1,60 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer')
+const yearSelector = '_ctl0_ContentPlaceHolder1_ddlYear'
+const socialGroupSelector = '_ctl0_ContentPlaceHolder1_ddlSocialGroup'
+const stateSelector = '_ctl0_ContentPlaceHolder1_ddlState'
+const districtSelector = '_ctl0_ContentPlaceHolder1_ddlDistrict'
+const tablesSelector = '_ctl0_ContentPlaceHolder1_ddlTables'
+const cropSelector = '_ctl0_ContentPlaceHolder1_ddlCrop'
+const submitForm = '#_ctl0_ContentPlaceHolder1_btnSubmit'
+const excelDownload = '#ReportViewer1__ctl5__ctl4__ctl0_Menu > div:nth-child(5) > a';
 
 (async () => {
   const browser = await puppeteer.launch({
     headless: false
   })
-  const page1 = await browser.newPage()
-  page1.on('console', msg => console.log('PAGE LOG:', msg.text()))
-  await page1.goto('http://agcensus.dacnet.nic.in/DistCharacteristic.aspx')
 
-  // const page2 = await browser.newPage()
-  // await page2.goto('http://agcensus.dacnet.nic.in/DistCharacteristic.aspx')
+  const downloadPage = async () => {
+    const page = await browser.newPage()
+    page.on('console', msg => console.log('PAGE LOG:', msg.text()))
+    await page.goto('http://agcensus.dacnet.nic.in/DistCharacteristic.aspx')
+    await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: './'})
 
-  const yearSelector = '_ctl0_ContentPlaceHolder1_ddlYear'
-  const socialGroupSelector = '_ctl0_ContentPlaceHolder1_ddlSocialGroup'
-  const stateSelector = '_ctl0_ContentPlaceHolder1_ddlState'
-  const districtSelector = '_ctl0_ContentPlaceHolder1_ddlDistrict'
-  const tablesSelector = '_ctl0_ContentPlaceHolder1_ddlTables'
-  const cropSelector = '_ctl0_ContentPlaceHolder1_ddlCrop'
+    const getOptions = (page, selector) => page.evaluate(sel => {
+      const children = document.getElementById(sel).children
+      const options = Array.from(children).map(x => x.value)
+      console.log(options)
+      return options
+    }, selector)
 
-  // const year = await page1.select('#_ctl0_ContentPlaceHolder1_ddlYear')
-  await page1.evaluate(() => {
-    document.getElementById('_ctl0_ContentPlaceHolder1_ddlYear').selectedIndex = 3
-  })
+    const setSelectVal = async (sel, val) =>
+      page.evaluate(data =>
+        (document.getElementById(data.sel).value = data.val), { sel, val })
 
-  await page1.evaluate(() => {
-    document.getElementById('_ctl0_ContentPlaceHolder1_ddlTables').selectedIndex = 7
-  })
+    // const year = await page.select('#_ctl0_ContentPlaceHolder1_ddlYear')
+    const yearOptions = await getOptions(page, yearSelector)
+    await setSelectVal(yearSelector, yearOptions[2])
 
-  await page1.click('#_ctl0_ContentPlaceHolder1_btnSubmit')
+    const stateOptions = await getOptions(page, stateSelector)
+    await setSelectVal(stateSelector, stateOptions[0])
+
+    const tablesOptions = await getOptions(page, tablesSelector)
+    await setSelectVal(tablesSelector, tablesOptions[0])
+
+    await Promise.all([
+      page.click(submitForm),
+      page.waitForNavigation()
+    ])
+
+    await page.evaluate(btn => {
+      document.querySelector(btn).click()
+    }, excelDownload)
+    return page.close()
+  }
+
+  let numberOfPages = 7
+  while (numberOfPages > 0) {
+    downloadPage()
+    numberOfPages--
+  }
+  // setInterval(function () { downloadPage() }, 5000)
 })()
