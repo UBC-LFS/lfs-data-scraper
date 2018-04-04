@@ -2,7 +2,6 @@ from selenium import webdriver
 import logging
 from selenium.common.exceptions import UnexpectedAlertPresentException, NoSuchElementException, TimeoutException
 from selenium.webdriver.chrome.options import Options
-from multiprocessing import Process
 import time
 import os
 
@@ -28,11 +27,16 @@ def submitForm(driver, year, state, district, crop, downloadDir):
     button_submit.click()
 
     # Download the data as a CSV
-    button_save = driver.find_element_by_xpath('//*[@id="ReportViewer1__ctl5__ctl4__ctl0_ButtonImg"]')
-    button_save.click()
-    time.sleep(1)
-    button_excel = driver.find_element_by_xpath('//*[@id="ReportViewer1__ctl5__ctl4__ctl0_Menu"]/div[5]/a')
-    button_excel.click()
+    try:
+        button_save = driver.find_element_by_xpath('//*[@id="ReportViewer1__ctl5__ctl4__ctl0_ButtonImg"]')
+        button_save.click()
+        time.sleep(1)
+        button_excel = driver.find_element_by_xpath('//*[@id="ReportViewer1__ctl5__ctl4__ctl0_Menu"]/div[5]/a')
+        button_excel.click()
+    # If the download button isn't there, assume that this is an error page and skip this one by returning successfully
+    except NoSuchElementException:
+        driver.get("http://agcensus.dacnet.nic.in/DistCharacteristic.aspx")
+        return
 
     # Rename the file so OS doesn't interrupt
     old_file = os.path.join(downloadDir, 'DistTableDisplay6b.xlsx')
@@ -89,12 +93,12 @@ def downloadFiles(index_year, rootDir, state_start, district_start, crop_start):
     chrome_options = Options()
     # This option fixes a problem with timeout exceptions not being thrown after the limit has been reached
     chrome_options.add_argument('--dns-prefetch-disable')
-    # Makes a new download directory for each process
+    # Makes a new download directory for each year index
     downloadDir = os.path.join(rootDir, str(index_year))
     prefs = {'download.default_directory' : downloadDir}
     chrome_options.add_experimental_option('prefs', prefs)
     driver = webdriver.Chrome(options=chrome_options)
-    driver.set_page_load_timeout(15)
+    driver.set_page_load_timeout(30)
     driver.get("http://agcensus.dacnet.nic.in/DistCharacteristic.aspx")
     # Need to click the current year because the other dropdown options change based on this
     dropdown_year = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlYear")
