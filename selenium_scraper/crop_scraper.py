@@ -212,7 +212,7 @@ def downloadFiles(index_year, rootDir, state_start, district_start, crop_start):
 
 rootDir = input('Specify root directory to download files to (defaults to current directory): ')
 if not rootDir:
-    rootDir = os.getcwd()
+    rootDir = os.path.join(os.getcwd(), 'crop')
 year = input('Specify the index of the year to download files from. Must be a number between 0-3: ')
 # The ONLY use for this should be to carry on where we left off when a script fails
 config = input('Specify the indices of the state, district, and crop separated by commas (optional): ')
