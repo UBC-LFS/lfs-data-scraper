@@ -23,7 +23,7 @@ def submitForm(driver, year, state, district, downloadDir):
     # If the file is already in the data folder, don't try to download
     if os.path.exists(new_file):
         return
-    button_submit = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_btnSubmit")
+    button_submit = driver.find_element_by_id("_ctl0_ContentPlaceHolder2_cmdSubmit")
     button_submit.click()
 
     # Download the data as a CSV
@@ -35,11 +35,11 @@ def submitForm(driver, year, state, district, downloadDir):
         button_excel.click()
     # If the download button isn't there, assume that this is an error page and skip this one by returning successfully
     except NoSuchElementException:
-        driver.get("http://agcensus.dacnet.nic.in/DistCharacteristic.aspx")
+        driver.get("http://inputsurvey.dacnet.nic.in/districttables.aspx")
         return
 
     # Rename the file so OS doesn't interrupt
-    old_file = os.path.join(downloadDir, 'DistTableDisplay2a.xlsx')
+    old_file = os.path.join(downloadDir, 'DistrictTable1.xlsx')
     while not os.path.exists(old_file):
         time.sleep(1)
     os.rename(old_file, new_file)
@@ -82,7 +82,7 @@ def findIndexByText(dropdownElement, text):
 
 def downloadFiles(index_year, rootDir, state_start, district_start):
     """
-    Function to download files from agcensus website
+    Function to download files from inputsurvey website
     :param index_year: index of the year dropdown
     :param rootDir: folder to download files to
     :param state_start: index of state dropdown to start from
@@ -98,24 +98,19 @@ def downloadFiles(index_year, rootDir, state_start, district_start):
     chrome_options.add_experimental_option('prefs', prefs)
     driver = webdriver.Chrome(options=chrome_options)
     driver.set_page_load_timeout(30)
-    driver.get("http://agcensus.dacnet.nic.in/DistCharacteristic.aspx")
+    driver.get("http://inputsurvey.dacnet.nic.in/districttables.aspx")
     # Need to click the current year because the other dropdown options change based on this
-    dropdown_year = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlYear")
+    dropdown_year = driver.find_element_by_id("_ctl0_ContentPlaceHolder2_ddlYear")
     dropdown_year.find_elements_by_tag_name('option')[index_year].click()
 
-    dropdown_social_group = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlSocialGroup")
-    # We only want the option with "ALL SOCIAL GROUPS" for this project
-    all_social_groups_index = findIndexByText(dropdown_social_group, 'ALL SOCIAL GROUPS')
-    dropdown_social_group.find_elements_by_tag_name('option')[all_social_groups_index].click()
-
-    dropdown_state = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlState")
+    dropdown_state = driver.find_element_by_id("_ctl0_ContentPlaceHolder2_ddlStates")
     num_options_state = len(dropdown_state.find_elements_by_tag_name("option"))
 
     for index_state in range(state_start, num_options_state):
         try:
-            dropdown_state = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlState")
+            dropdown_state = driver.find_element_by_id("_ctl0_ContentPlaceHolder2_ddlStates")
             dropdown_state.find_elements_by_tag_name('option')[index_state].click()
-            dropdown_district = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlDistrict")
+            dropdown_district = driver.find_element_by_id("_ctl0_ContentPlaceHolder2_ddldistrict")
             num_options_district = len(dropdown_district.find_elements_by_tag_name("option"))
         except UnexpectedAlertPresentException:
             print("caught error")
@@ -130,17 +125,16 @@ def downloadFiles(index_year, rootDir, state_start, district_start):
             district_loop_start = district_start
         for index_district in range(district_loop_start, num_options_district):
             try:
-                dropdown_district = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlDistrict")
+                dropdown_district = driver.find_element_by_id("_ctl0_ContentPlaceHolder2_ddldistrict")
                 dropdown_district.find_elements_by_tag_name('option')[index_district].click()
-                dropdown_tables = driver.find_element_by_id("_ctl0_ContentPlaceHolder1_ddlTables")
-                tenancy_table_index = findIndexByText(dropdown_tables, 'TENANCY')
+                dropdown_tables = driver.find_element_by_id("_ctl0_ContentPlaceHolder2_ddlTables")
+                tenancy_table_index = findIndexByText(dropdown_tables, 'TABLE1-PARCELS PER HOLDING & AREA PER PARCEL')
                 dropdown_tables.find_elements_by_tag_name('option')[tenancy_table_index].click()
 
-                dropdown_input = [('_ctl0_ContentPlaceHolder1_ddlYear', index_year),
-                                  ('_ctl0_ContentPlaceHolder1_ddlSocialGroup', all_social_groups_index),
-                                  ('_ctl0_ContentPlaceHolder1_ddlState', index_state),
-                                  ('_ctl0_ContentPlaceHolder1_ddlDistrict', index_district),
-                                  ('_ctl0_ContentPlaceHolder1_ddlTables', tenancy_table_index)]
+                dropdown_input = [('_ctl0_ContentPlaceHolder2_ddlYear', index_year),
+                                  ('_ctl0_ContentPlaceHolder2_ddlStates', index_state),
+                                  ('_ctl0_ContentPlaceHolder2_ddldistrict', index_district),
+                                  ('_ctl0_ContentPlaceHolder2_ddlTables', tenancy_table_index)]
                 # If anything in this try block fails, we will re-try the same configuration up to 3 times before
                 # we move on to the next one
                 try:
@@ -150,7 +144,7 @@ def downloadFiles(index_year, rootDir, state_start, district_start):
                     _state_start = index_state
                     global _district_start
                     _district_start = index_district
-                    log.info('successfully downloaded configuration: y' + str(index_year) + '-sg' + str(all_social_groups_index) + '-s' +
+                    log.info('successfully downloaded configuration: y' + str(index_year) + '-s' +
                              str(index_state) + '-d' + str(index_district) + '-t' + str(tenancy_table_index))
 
                 except Exception as e:
@@ -158,14 +152,12 @@ def downloadFiles(index_year, rootDir, state_start, district_start):
                     if (options != None):
                         log.error('There was an error while submitting the form for options:\n' +
                                   'Year: ' + str(options[0]) + '\n' +
-                                  'Social Group: ' + str(options[1]) + '\n' +
-                                  'State: ' + str(options[2]) + '\n' +
-                                  'District: ' + str(options[3]) + '\n' +
-                                  'Table: ' + str(options[4]) + '\n')
+                                  'State: ' + str(options[1]) + '\n' +
+                                  'District: ' + str(options[2]) + '\n' +
+                                  'Table: ' + str(options[3]) + '\n')
                     else:
                         log.error('There was an error while submitting the form for options:\n' +
                                   'Year index: ' + str(index_year) + '\n' +
-                                  'Social Group index: ' + str(all_social_groups_index) + '\n' +
                                   'State index: ' + str(index_state) + '\n' +
                                   'District index: ' + str(index_district) + '\n' +
                                   'Table index: ' + str(tenancy_table_index) + '\n')
@@ -173,7 +165,7 @@ def downloadFiles(index_year, rootDir, state_start, district_start):
                     for i in range(0, 2):
                         # Retry up to 3 more times. First success breaks out of for-loop
                         try:
-                            driver.get("http://agcensus.dacnet.nic.in/DistCharacteristic.aspx")
+                            driver.get("http://inputsurvey.dacnet.nic.in/districttables.aspx")
                             configureDropdowns(driver, dropdown_input)
                             submitForm(driver, str(index_year), str(index_state), str(index_district), downloadDir)
                             _state_start = index_state
@@ -194,7 +186,7 @@ def downloadFiles(index_year, rootDir, state_start, district_start):
 
 rootDir = input('Specify root directory to download files to (defaults to current directory): ')
 if not rootDir:
-    rootDir = os.path.join(os.getcwd(), 'tenancy')
+    rootDir = os.path.join(os.getcwd(), 'parcels')
 year = input('Specify the index of the year to download files from. Must be a number between 0-3: ')
 # The ONLY use for this should be to carry on where we left off when a script fails
 config = input('Specify the indices of the state, district separated by commas (optional): ')
