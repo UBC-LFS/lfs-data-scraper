@@ -19,7 +19,7 @@ def submitForm(driver, year, state, district, downloadDir):
     :return:
     """
     new_file = os.path.join(downloadDir,
-                            'DistTableDisplay6b - ' + year + '-' + state + '-' + district  + '.xlsx')
+                            'DistTableDisplay3 - ' + year + '-' + state + '-' + district  + '.xlsx')
     # If the file is already in the data folder, don't try to download
     if os.path.exists(new_file):
         return
@@ -197,7 +197,7 @@ if not rootDir:
     rootDir = os.path.join(os.getcwd(), 'landuse')
 year = input('Specify the index of the year to download files from. Must be a number between 0-3: ')
 # The ONLY use for this should be to carry on where we left off when a script fails
-config = input('Specify the indices of the state, district separated by commas (optional): ')
+config = input('Specify the indices of the state and district separated by commas (optional): ')
 if not config:
     _state_start = 0
     _district_start = 0
