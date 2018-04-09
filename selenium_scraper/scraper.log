@@ -2790,3 +2790,104 @@ District index: 0
 Table index: 7
 Crop index: 90
 
+DEBUG:scraper_log:downloadFiles failed, continuing from where it failed
+DEBUG:scraper_log:downloadFiles failed, continuing from where it failed
+DEBUG:scraper_log:downloadFiles failed, continuing from where it failed
+DEBUG:scraper_log:downloadFiles failed, continuing from where it failed
+DEBUG:scraper_log:downloadFiles failed, continuing from where it failed
+DEBUG:scraper_log:downloadFiles failed, continuing from where it failed
+DEBUG:scraper_log:downloadFiles failed, continuing from where it failed
+ERROR:scraper_log:There was an error while submitting the form for options:
+Year index: 0
+State index: 0
+District index: 0
+Table index: 0
+
+DEBUG:scraper_log:Message: no such element: Unable to locate element: {"method":"id","selector":"_ctl0_ContentPlaceHolder2_btnSubmit"}
+  (Session info: chrome=65.0.3325.181)
+  (Driver info: chromedriver=2.35.528161 (5b82f2d2aae0ca24b877009200ced9065a772e73),platform=Windows NT 10.0.16299 x86_64)
+
+DEBUG:scraper_log:downloadFiles failed, continuing from where it failed
+ERROR:scraper_log:There was an error while submitting the form for options:
+Year index: 0
+State index: 0
+District index: 0
+Table index: 0
+
+DEBUG:scraper_log:Message: no such element: Unable to locate element: {"method":"id","selector":"_ctl0_ContentPlaceHolder_cmdSubmit"}
+  (Session info: chrome=65.0.3325.181)
+  (Driver info: chromedriver=2.35.528161 (5b82f2d2aae0ca24b877009200ced9065a772e73),platform=Windows NT 10.0.16299 x86_64)
+
+DEBUG:scraper_log:downloadFiles failed, continuing from where it failed
+ERROR:scraper_log:There was an error while submitting the form for options:
+Year index: 0
+State index: 0
+District index: 0
+Table index: 0
+
+DEBUG:scraper_log:Message: no such element: Unable to locate element: {"method":"id","selector":"_ctl0:ContentPlaceHolder_cmdSubmit"}
+  (Session info: chrome=65.0.3325.181)
+  (Driver info: chromedriver=2.35.528161 (5b82f2d2aae0ca24b877009200ced9065a772e73),platform=Windows NT 10.0.16299 x86_64)
+
+DEBUG:scraper_log:downloadFiles failed, continuing from where it failed
+ERROR:scraper_log:There was an error while submitting the form for options:
+Year index: 0
+State index: 0
+District index: 0
+Table index: 0
+
+DEBUG:scraper_log:Message: no such element: Unable to locate element: {"method":"id","selector":"_ctl0:ContentPlaceHolder2:cmdSubmit"}
+  (Session info: chrome=65.0.3325.181)
+  (Driver info: chromedriver=2.35.528161 (5b82f2d2aae0ca24b877009200ced9065a772e73),platform=Windows NT 10.0.16299 x86_64)
+
+DEBUG:scraper_log:downloadFiles failed, continuing from where it failed
+ERROR:scraper_log:There was an error while submitting the form for options:
+Year index: 0
+State index: 0
+District index: 0
+Table index: 0
+
+DEBUG:scraper_log:Message: no such element: Unable to locate element: {"method":"id","selector":"cmdBack"}
+  (Session info: chrome=65.0.3325.181)
+  (Driver info: chromedriver=2.35.528161 (5b82f2d2aae0ca24b877009200ced9065a772e73),platform=Windows NT 10.0.16299 x86_64)
+
+DEBUG:scraper_log:downloadFiles failed, continuing from where it failed
+INFO:scraper_log:successfully downloaded configuration: y0-s0-d0-t0
+ERROR:scraper_log:There was an error while submitting the form for options:
+Year index: 0
+State index: 0
+District index: 1
+Table index: 0
+
+DEBUG:scraper_log:Message: no such element: Unable to locate element: {"method":"id","selector":"cmdBack"}
+  (Session info: chrome=65.0.3325.181)
+  (Driver info: chromedriver=2.35.528161 (5b82f2d2aae0ca24b877009200ced9065a772e73),platform=Windows NT 10.0.16299 x86_64)
+
+DEBUG:scraper_log:downloadFiles failed, continuing from where it failed
+INFO:scraper_log:successfully downloaded configuration: y0-s0-d1-t0
+ERROR:scraper_log:There was an error while submitting the form for options:
+Year index: 0
+State index: 1
+District index: 0
+Table index: 0
+
+DEBUG:scraper_log:Message: no such element: Unable to locate element: {"method":"id","selector":"cmdBack"}
+  (Session info: chrome=65.0.3325.181)
+  (Driver info: chromedriver=2.35.528161 (5b82f2d2aae0ca24b877009200ced9065a772e73),platform=Windows NT 10.0.16299 x86_64)
+
+DEBUG:scraper_log:downloadFiles failed, continuing from where it failed
+INFO:scraper_log:successfully downloaded configuration: y0-s1-d0-t0
+ERROR:scraper_log:There was an error while submitting the form for options:
+Year index: 0
+State index: 1
+District index: 1
+Table index: 0
+
+DEBUG:scraper_log:Message: no such element: Unable to locate element: {"method":"id","selector":"cmdBack"}
+  (Session info: chrome=65.0.3325.181)
+  (Driver info: chromedriver=2.35.528161 (5b82f2d2aae0ca24b877009200ced9065a772e73),platform=Windows NT 10.0.16299 x86_64)
+
+DEBUG:scraper_log:downloadFiles failed, continuing from where it failed
+INFO:scraper_log:successfully downloaded configuration: y0-s0-d0-t0
+INFO:scraper_log:successfully downloaded configuration: y0-s0-d1-t0
+INFO:scraper_log:successfully downloaded configuration: y0-s1-d0-t0

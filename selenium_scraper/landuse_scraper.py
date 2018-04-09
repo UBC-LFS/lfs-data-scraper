@@ -202,8 +202,8 @@ if not config:
     _state_start = 0
     _district_start = 0
 else:
-    _state_start = config.split(',')[0];
-    _district_start = config.split(',')[1];
+    _state_start = config.split(',')[0]
+    _district_start = config.split(',')[1]
 
 
 while True:

@@ -221,9 +221,9 @@ if not config:
     _district_start = 0
     _crop_start = 0
 else:
-    _state_start = config.split(',')[0];
-    _district_start = config.split(',')[1];
-    _crop_start = config.split(',')[2];
+    _state_start = config.split(',')[0]
+    _district_start = config.split(',')[1]
+    _crop_start = config.split(',')[2]
 
 
 while True:
