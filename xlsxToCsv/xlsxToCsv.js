@@ -1,12 +1,12 @@
 const fs = require('fs')
 const xlsx = require('node-xlsx')
-let dir = fs.readdirSync(__dirname + '/xlsx/')
+let dir = fs.readdirSync(__dirname + '/xlsx/Archive/')
 
 // filter out .xlsx files
 dir = dir.filter(file => file.includes('.xlsx'))
 
 dir.forEach(file => {
-  const xlsxObj = xlsx.parse(__dirname + '/xlsx/' + file)
+  const xlsxObj = xlsx.parse(__dirname + '/xlsx/Archive/' + file)
   let rows = []
   xlsxObj.map(sheet => {
     // loop through all rows in the sheet and extract it
