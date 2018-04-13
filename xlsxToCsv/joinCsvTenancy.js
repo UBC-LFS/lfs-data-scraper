@@ -30,7 +30,8 @@ const writeHeader = async () => {
     'Partly owned, Partly Leased-in and Partly Otherwise Operated Holdings (Owned Area)',
     'Partly owned, Partly Leased-in and Partly Otherwise Operated Holdings (Leased-in Area)',
     'Partly owned, Partly Leased-in and Partly Otherwise Operated Holdings (Otherwise Operated Area)',
-    'Partly owned, Partly Leased-in and Partly Otherwise Operated Holdings (Total Area)'
+    'Partly owned, Partly Leased-in and Partly Otherwise Operated Holdings (Total Area)', 
+    'File Name'
   ]
   await fsWriteFile(__dirname + '/output/' + outputName, header + '\r\n')
 }
@@ -41,11 +42,33 @@ const readCSVs = async dir => {
     const file = await fsReadFile(__dirname + '/csv/' + inputPath)
     parse(file, { relax_column_count: true }, (err, data) => {
       assert.equal(null, err)
-      console.log(data)
-      return
       try {
-        const year = data[2][6]
-        const crop = 
+        const year = data[1][6]
+        const state = data[3][0].split(': ')[1]
+        const district = data[3][5].split(': ')[1]
+        for (let i = 8; i <= 23; i++) {
+          stream.write([
+            year,
+            state,
+            district,
+            data[i][0],
+            data[i][1],
+            data[i][2],
+            data[i][3],
+            data[i][4],
+            data[i][5],
+            data[i][6],
+            data[i][7],
+            data[i][8],
+            data[i][9],
+            data[i][10],
+            data[i][11],
+            data[i][12],
+            data[i][13],
+            data[i][14],
+            inputPath
+          ] + '\r\n')
+        }
       }
       catch (e) {
         console.log('invalid spreadsheets!: ', inputPath)
