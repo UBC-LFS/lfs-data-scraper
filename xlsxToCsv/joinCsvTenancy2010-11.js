@@ -30,7 +30,7 @@ const writeHeader = async () => {
     'Partly owned Partly Leased-in and Partly Otherwise Operated Holdings (Owned Area)',
     'Partly owned Partly Leased-in and Partly Otherwise Operated Holdings (Leased-in Area)',
     'Partly owned Partly Leased-in and Partly Otherwise Operated Holdings (Otherwise Operated Area)',
-    'Partly owned Partly Leased-in and Partly Otherwise Operated Holdings (Total Area)', 
+    'Partly owned Partly Leased-in and Partly Otherwise Operated Holdings (Total Area)',
     'File Name'
   ]
   await fsWriteFile(__dirname + '/output/' + outputName, header + '\r\n')
@@ -41,11 +41,12 @@ const readCSVs = async dir => {
   dir.forEach(async inputPath => {
     const file = await fsReadFile(__dirname + '/csv/' + inputPath)
     parse(file, { relax_column_count: true }, (err, data) => {
+      console.log(data)
       assert.equal(null, err)
       try {
-        const year = data[1][6]
+        const year = data[1][5]
         const state = data[3][0].split(': ')[1]
-        const district = data[3][5].split(': ')[1]
+        const district = data[3][0].split(': ')[1]
         for (let i = 8; i <= 23; i++) {
           stream.write([
             year,
@@ -57,15 +58,15 @@ const readCSVs = async dir => {
             data[i][3],
             data[i][4],
             data[i][5],
-            data[i][6],
-            data[i][7],
-            data[i][8],
-            data[i][9],
             data[i][10],
             data[i][11],
             data[i][12],
             data[i][13],
-            data[i][14],
+            data[i][6],
+            data[i][7],
+            data[i][8],
+            '',
+            data[i][9],
             inputPath
           ] + '\r\n')
         }
