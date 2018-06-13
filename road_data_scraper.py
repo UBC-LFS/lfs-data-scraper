@@ -3,11 +3,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
-
 import time
+import csv
 
 driver = webdriver.Chrome('C:/Users/Jeong/Downloads/chromedriver_win32/chromedriver.exe') # PATH TO DRIVER
 driver.implicitly_wait(5) # seconds
@@ -35,20 +32,32 @@ for i in range(1, len(state_options)):
     Select(driver.find_element_by_css_selector("select[name='Agency']")).select_by_index(0)
 
     view_details_button = driver.find_element_by_css_selector("input#btnViewSPDetails")
+    time.sleep(1)
     view_details_button.click()
+    time.sleep(2) # wait until data has loaded
 
-    # try:
-    #   element = WebDriverWait(driver, 10).until(
-    #     EC.element_to_be_clickable((By.CSS_SELECTOR, 'input#btnViewSPDetails'))
-    #   )
-    # except TimeoutException as ex:
-    #   print("Exception has been thrown. " + str(ex))
-    #   driver.quit()
+    # Create csv file
+    state_name = state_select.first_selected_option.text
+    district_name = district_select.first_selected_option.text
+    file_name = state_name + ' ' + district_name + '.csv'
 
-    time.sleep(5) # wait until data has loaded
+    with open(file_name, 'w', newline='') as csvfile:
+      wr = csv.writer(csvfile)
+      
+      # 1. Status of Connectivity
+      table_1 = driver.find_element_by_css_selector("div#divContentSPConnStat").find_element_by_tag_name("table")
+      for row in table_1.find_elements_by_css_selector('tr'):
+        wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
 
-    
+      # 2. Status of Executing Machinery
+      table_2 = driver.find_element_by_css_selector("div#divContentSPExecOfficers").find_element_by_tag_name("table")
+      for row in table_2.find_elements_by_css_selector('tr'):
+        wr.writerow([d.text for d in row.find_elements_by_css_selector('td')]) 
 
+      # 3. Phasewise Summary
+      table_3 = driver.find_element_by_css_selector("div#divContentSPPhaseSummary").find_element_by_tag_name("table")
+      for row in table_3.find_elements_by_css_selector('tr'):
+        wr.writerow([d.text for d in row.find_elements_by_css_selector('*')])
         
 
 
