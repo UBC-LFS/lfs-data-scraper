@@ -3,6 +3,12 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+
+import time
+
 driver = webdriver.Chrome('C:/Users/Jeong/Downloads/chromedriver_win32/chromedriver.exe') # PATH TO DRIVER
 driver.implicitly_wait(5) # seconds
 
@@ -20,7 +26,6 @@ for i in range(1, len(state_options)):
   # for each state, select a district
   district_select = Select(driver.find_element_by_css_selector("select#ddlSPDistrict"))
   district_options = district_select.options
-  print(len(district_options))
 
   for j in range(1, len(district_options)):
     district_select.select_by_index(j)
@@ -30,7 +35,19 @@ for i in range(1, len(state_options)):
     Select(driver.find_element_by_css_selector("select[name='Agency']")).select_by_index(0)
 
     view_details_button = driver.find_element_by_css_selector("input#btnViewSPDetails")
-    # view_details_button.click()
+    view_details_button.click()
+
+    # try:
+    #   element = WebDriverWait(driver, 10).until(
+    #     EC.element_to_be_clickable((By.CSS_SELECTOR, 'input#btnViewSPDetails'))
+    #   )
+    # except TimeoutException as ex:
+    #   print("Exception has been thrown. " + str(ex))
+    #   driver.quit()
+
+    time.sleep(5) # wait until data has loaded
+
+    
 
         
 
