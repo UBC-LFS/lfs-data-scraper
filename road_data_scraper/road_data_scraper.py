@@ -48,15 +48,30 @@ for i in range(1, len(state_options)):
       for row in table_1.find_elements_by_css_selector('tr'):
         wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
 
+      # Write empty row
+      wr.writerow([])
+
       # 2. Status of Executing Machinery
       table_2 = driver.find_element_by_css_selector("div#divContentSPExecOfficers").find_element_by_tag_name("table")
       for row in table_2.find_elements_by_css_selector('tr'):
         wr.writerow([d.text for d in row.find_elements_by_css_selector('td')]) 
 
+      # Write empty row
+      wr.writerow([])
+
       # 3. Phasewise Summary
       table_3 = driver.find_element_by_css_selector("div#divContentSPPhaseSummary").find_element_by_tag_name("table")
       for row in table_3.find_elements_by_css_selector('tr'):
         wr.writerow([d.text for d in row.find_elements_by_css_selector('*')])
+        
+      # Write empty row
+      wr.writerow([])
+
+      # 4. Batchwise Summary
+
+      # 7(a). Quality Control Monitoring by 2nd Tier
+
+      # 7(b). Quality Control Monitoring by 3rd Tier
         
 
 
