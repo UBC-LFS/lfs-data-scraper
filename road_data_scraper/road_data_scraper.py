@@ -72,10 +72,18 @@ for i in range(1, len(state_options)):
       wr.writerow([])
 
       # 4. Batchwise Summary
+      # Iterate through an arbtirary amount of phases
+      # TODO pull the divs with box titles containing phase I to X
+      batchwise_tables = driver.find_elements_by_css_selector('div.box.box-warning.collapsed-box')
+      for batchwise_table in batchwise_tables:
+        print(batchwise_table.text)
+        dropdown_button = batchwise_table.find_element_by_css_selector('div.box-tools.pull-right').find_element_by_tag_name('button')
+        dropdown_button.click()
+        time.sleep(1)
+      
+      # Quality Control Monitoring by 2nd Tier
 
-      # 7(a). Quality Control Monitoring by 2nd Tier
-
-      # 7(b). Quality Control Monitoring by 3rd Tier
+      # Quality Control Monitoring by 3rd Tier
         
 
 
