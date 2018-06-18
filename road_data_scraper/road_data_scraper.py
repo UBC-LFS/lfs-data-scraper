@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import Select
 
 import time
 import csv
+import os
 
 driver = webdriver.Chrome()
 driver.implicitly_wait(5) 
@@ -36,11 +37,14 @@ for i in range(1, len(state_options)):
     time.sleep(2) # wait until data has loaded
 
     # Create csv file
+    directory_name = 'output'
+    if not os.path.exists(directory_name):
+      os.makedirs(directory_name)
     state_name = state_select.first_selected_option.text
     district_name = district_select.first_selected_option.text
     file_name = state_name + ' ' + district_name + '.csv'
 
-    with open(file_name, 'w', newline='') as csvfile:
+    with open(directory_name + '/' + file_name, 'w', newline='') as csvfile:
       wr = csv.writer(csvfile)
       
       # 1. Status of Connectivity
