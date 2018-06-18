@@ -1,5 +1,7 @@
 # Instructions
 
+This script takes data from HTML tables from http://omms.nic.in/ and generates CSV files.
+
 1. Install Python 3.6.5
 
 2. Download the driver for your preferred browser. The Python project is set up to work with Chrome.
