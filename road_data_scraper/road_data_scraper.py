@@ -71,15 +71,19 @@ for i in range(1, len(state_options)):
       # Write empty row
       wr.writerow([])
 
-      # 4. Batchwise Summary
-      # Iterate through an arbtirary amount of phases
-      # TODO pull the divs with box titles containing phase I to X
+      # 4. Batchwise Summary (there's an arbitrary number of tables for different years)
       batchwise_tables = driver.find_elements_by_css_selector('div.box.box-warning.collapsed-box')
-      for batchwise_table in batchwise_tables:
-        print(batchwise_table.text)
-        dropdown_button = batchwise_table.find_element_by_css_selector('div.box-tools.pull-right').find_element_by_tag_name('button')
+      for element in batchwise_tables:
+        batchwise_table_title = element.text
+        print(batchwise_table_title)
+        wr.writerow([batchwise_table_title])
+        dropdown_button = element.find_element_by_css_selector('div.box-tools.pull-right').find_element_by_tag_name('button')
         dropdown_button.click()
         time.sleep(1)
+
+        # TODO Get year from table title
+        # TODO get div using the year
+        batchwise_table = element.find_element_by_css_selector('div#divContentSPPhaseSummaryYear')
       
       # Quality Control Monitoring by 2nd Tier
 
