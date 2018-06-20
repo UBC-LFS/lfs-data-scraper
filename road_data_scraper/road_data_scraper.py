@@ -1,11 +1,12 @@
+import time
+import csv
+import os
+import re
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
-
-import time
-import csv
-import os
 
 driver = webdriver.Chrome()
 driver.implicitly_wait(5) 
@@ -75,15 +76,17 @@ for i in range(1, len(state_options)):
       batchwise_tables = driver.find_elements_by_css_selector('div.box.box-warning.collapsed-box')
       for element in batchwise_tables:
         batchwise_table_title = element.text
-        print(batchwise_table_title)
         wr.writerow([batchwise_table_title])
         dropdown_button = element.find_element_by_css_selector('div.box-tools.pull-right').find_element_by_tag_name('button')
         dropdown_button.click()
         time.sleep(1)
 
-        # TODO Get year from table title
-        # TODO get div using the year
-        batchwise_table = element.find_element_by_css_selector('div#divContentSPPhaseSummaryYear')
+        # Get table for each year
+        year = re.search(r"[0-9]{4}", batchwise_table_title).group(0)
+        batchwise_table = element.find_element_by_css_selector('div#divContentSPPhaseSummaryYear' + year)
+
+        for row in batchwise_table.find_elements_by_css_selector('tr'):
+          wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
       
       # Quality Control Monitoring by 2nd Tier
 
