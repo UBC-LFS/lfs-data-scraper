@@ -15,4 +15,6 @@ This script takes data from HTML tables from http://omms.nic.in/ and generates C
 
 3. Run `python -m pip install selenium` to install selenium
 
-4. Run `python road_data_scraper.py`
+4. Run `python road_data_scraper.py` or `python .\road_data_scraper.py`
+
+5. CSV files should be created in road_data_scraper/output/
