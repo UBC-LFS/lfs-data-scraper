@@ -109,6 +109,7 @@ for i in range(1, len(state_options)):
       except NoSuchElementException:
         print('no qc3 table found')
 
+print('Successfully finished')
       
 
 
