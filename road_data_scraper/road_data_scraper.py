@@ -7,6 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
+from selenium.common.exceptions import NoSuchElementException
 
 driver = webdriver.Chrome()
 driver.implicitly_wait(5) 
@@ -41,8 +42,12 @@ for i in range(1, len(state_options)):
     directory_name = 'output'
     if not os.path.exists(directory_name):
       os.makedirs(directory_name)
+      
     state_name = state_select.first_selected_option.text
     district_name = district_select.first_selected_option.text
+    print('\n')
+    print(state_name + ' ' + district_name)
+
     file_name = state_name + ' ' + district_name + '.csv'
 
     with open(directory_name + '/' + file_name, 'w', newline='') as csvfile:
@@ -89,9 +94,22 @@ for i in range(1, len(state_options)):
           wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
       
       # Quality Control Monitoring by 2nd Tier
+      try:
+        table_qc2 = driver.find_element_by_css_selector("div#divContentSP2TierQM").find_element_by_tag_name("table")
+        for row in table_qc2.find_elements_by_css_selector('tr'):
+          wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
+      except NoSuchElementException:
+        print('no qc2 table found')
 
       # Quality Control Monitoring by 3rd Tier
-        
+      try: 
+        table_qc3 = driver.find_element_by_css_selector("div#divContentSP3TierQM").find_element_by_tag_name("table")
+        for row in table_qc3.find_elements_by_css_selector('tr'):
+          wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
+      except NoSuchElementException:
+        print('no qc3 table found')
+
+      
 
 
 
