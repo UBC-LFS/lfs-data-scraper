@@ -137,8 +137,14 @@ def main():
         return True
 
       result = create_csv_file(file_name)
-      while not result: # continue trying until it succeeds 
-        result = create_csv_file(file_name)
+      attempt = 3
+      while not result: # continue trying until it succeeds
+        if attempt > 0:
+          result = create_csv_file(file_name)
+          attempt -= 1
+        else:
+          print('Failed to scrape ' + file_name)
+          break
         
   print('Successfully finished scraping all data')
 
