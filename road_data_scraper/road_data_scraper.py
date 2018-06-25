@@ -47,10 +47,10 @@ def main():
         
       state_name = state_select.first_selected_option.text
       district_name = district_select.first_selected_option.text
-      print('\n')
-      print(state_name + ' + ' + district_name)
+      file_name = state_name + ' - ' + district_name + '.csv'
 
-      file_name = state_name + ' ' + district_name + '.csv'
+      print('\n')
+      print(file_name)
 
       # Returns True if data scraping was successful, False otherwise
       def create_csv_file(file_name):
