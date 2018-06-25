@@ -35,9 +35,9 @@ def main():
       Select(driver.find_element_by_css_selector("select[name='Agency']")).select_by_index(0)
 
       view_details_button = driver.find_element_by_css_selector("input#btnViewSPDetails")
-      time.sleep(1)
+      time.sleep(3)
       view_details_button.click()
-      time.sleep(2) # wait until data has loaded
+      time.sleep(3) # wait until data has loaded
 
       # Create csv file
       directory_name = 'output'
@@ -51,66 +51,71 @@ def main():
 
       file_name = state_name + ' ' + district_name + '.csv'
 
-      with open(directory_name + '/' + file_name, 'w', newline='') as csvfile:
-        wr = csv.writer(csvfile)
-        
-        # 1. Status of Connectivity
-        table_1 = driver.find_element_by_css_selector("div#divContentSPConnStat").find_element_by_tag_name("table")
-        for row in table_1.find_elements_by_css_selector('tr'):
-          wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
-
-        # Write empty row
-        wr.writerow([])
-
-        # 2. Status of Executing Machinery
-        table_2 = driver.find_element_by_css_selector("div#divContentSPExecOfficers").find_element_by_tag_name("table")
-        for row in table_2.find_elements_by_css_selector('tr'):
-          wr.writerow([d.text for d in row.find_elements_by_css_selector('td')]) 
-
-        # Write empty row
-        wr.writerow([])
-
-        # 3. Phasewise Summary
-        table_3 = driver.find_element_by_css_selector("div#divContentSPPhaseSummary").find_element_by_tag_name("table")
-        for row in table_3.find_elements_by_css_selector('tr'):
-          wr.writerow([d.text for d in row.find_elements_by_css_selector('*')])
+      def create_csv_file(file_name):
+        with open(directory_name + '/' + file_name, 'w', newline='') as csvfile:
+          wr = csv.writer(csvfile)
           
-        # Write empty row
-        wr.writerow([])
+          # 1. Status of Connectivity
+          table_1 = driver.find_element_by_css_selector("div#divContentSPConnStat").find_element_by_tag_name("table")
+          for row in table_1.find_elements_by_css_selector('tr'):
+            wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) 
 
-        # 4. Batchwise Summary (there's an arbitrary number of tables for different years)
-        batchwise_tables = driver.find_elements_by_css_selector('div.box.box-warning.collapsed-box')
-        for element in batchwise_tables:
-          batchwise_table_title = element.text
-          wr.writerow([batchwise_table_title])
-          dropdown_button = element.find_element_by_css_selector('div.box-tools.pull-right').find_element_by_tag_name('button')
-          dropdown_button.click()
-          time.sleep(1)
+          # Write empty row
+          wr.writerow([])
 
-          # Get table for each year
-          year = re.search(r"[0-9]{4}", batchwise_table_title).group(0)
-          batchwise_table = element.find_element_by_css_selector('div#divContentSPPhaseSummaryYear' + year)
+          # 2. Status of Executing Machinery
+          table_2 = driver.find_element_by_css_selector("div#divContentSPExecOfficers").find_element_by_tag_name("table")
+          for row in table_2.find_elements_by_css_selector('tr'):
+            wr.writerow([d.text for d in row.find_elements_by_css_selector('td')]) 
 
-          for row in batchwise_table.find_elements_by_css_selector('tr'):
-            wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
-        
-        # Quality Control Monitoring by 2nd Tier
-        try:
-          table_qc2 = driver.find_element_by_css_selector("div#divContentSP2TierQM").find_element_by_tag_name("table")
-          for row in table_qc2.find_elements_by_css_selector('tr'):
-            wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
-        except NoSuchElementException:
-          print('no qc2 table found')
+          # Write empty row
+          wr.writerow([])
 
-        # Quality Control Monitoring by 3rd Tier
-        try: 
-          table_qc3 = driver.find_element_by_css_selector("div#divContentSP3TierQM").find_element_by_tag_name("table")
-          for row in table_qc3.find_elements_by_css_selector('tr'):
-            wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
-        except NoSuchElementException:
-          print('no qc3 table found')
+          # 3. Phasewise Summary
+          table_3 = driver.find_element_by_css_selector("div#divContentSPPhaseSummary").find_element_by_tag_name("table")
+          for row in table_3.find_elements_by_css_selector('tr'):
+            wr.writerow([d.text for d in row.find_elements_by_css_selector('*')])
+            
+          # Write empty row
+          wr.writerow([])
+
+          # 4. Batchwise Summary (there's an arbitrary number of tables for different years)
+          batchwise_tables = driver.find_elements_by_css_selector('div.box.box-warning.collapsed-box')
+          for element in batchwise_tables:
+            batchwise_table_title = element.text
+            wr.writerow([batchwise_table_title])
+            dropdown_button = element.find_element_by_css_selector('div.box-tools.pull-right').find_element_by_tag_name('button')
+            dropdown_button.click()
+            time.sleep(3)
+
+            # Get table for each year
+            year = re.search(r"[0-9]{4}", batchwise_table_title).group(0)
+            batchwise_table = element.find_element_by_css_selector('div#divContentSPPhaseSummaryYear' + year)
+
+            for row in batchwise_table.find_elements_by_css_selector('tr'):
+              wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
+          
+          # Quality Control Monitoring by 2nd Tier
+          try:
+            table_qc2 = driver.find_element_by_css_selector("div#divContentSP2TierQM").find_element_by_tag_name("table")
+            for row in table_qc2.find_elements_by_css_selector('tr'):
+              wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
+          except NoSuchElementException:
+            print('no qc2 table found')
+
+          # Quality Control Monitoring by 3rd Tier
+          try: 
+            table_qc3 = driver.find_element_by_css_selector("div#divContentSP3TierQM").find_element_by_tag_name("table")
+            for row in table_qc3.find_elements_by_css_selector('tr'):
+              wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
+          except NoSuchElementException:
+            print('no qc3 table found')
+        return True
+
+      create_csv_file(file_name)
 
   print('Successfully finished')
+
 
 if __name__ == "__main__":
   main()
