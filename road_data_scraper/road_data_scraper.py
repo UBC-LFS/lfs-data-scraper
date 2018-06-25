@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import StaleElementReferenceException
 
 def main():
   driver = webdriver.Chrome()
@@ -47,34 +48,50 @@ def main():
       state_name = state_select.first_selected_option.text
       district_name = district_select.first_selected_option.text
       print('\n')
-      print(state_name + '+' + district_name)
+      print(state_name + ' + ' + district_name)
 
       file_name = state_name + ' ' + district_name + '.csv'
 
+      # Returns True if data scraping was successful, False otherwise
       def create_csv_file(file_name):
         with open(directory_name + '/' + file_name, 'w', newline='') as csvfile:
           wr = csv.writer(csvfile)
           
           # 1. Status of Connectivity
-          table_1 = driver.find_element_by_css_selector("div#divContentSPConnStat").find_element_by_tag_name("table")
-          for row in table_1.find_elements_by_css_selector('tr'):
-            wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) 
+          try:
+            table_1 = driver.find_element_by_css_selector("div#divContentSPConnStat").find_element_by_tag_name("table")
+            for row in table_1.find_elements_by_css_selector('tr'):
+              wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) 
+          except StaleElementReferenceException:
+            csvfile.truncate(0)
+            print('StaleElementReferenceException thrown, trying again')
+            return False
 
           # Write empty row
           wr.writerow([])
 
           # 2. Status of Executing Machinery
-          table_2 = driver.find_element_by_css_selector("div#divContentSPExecOfficers").find_element_by_tag_name("table")
-          for row in table_2.find_elements_by_css_selector('tr'):
-            wr.writerow([d.text for d in row.find_elements_by_css_selector('td')]) 
+          try:
+            table_2 = driver.find_element_by_css_selector("div#divContentSPExecOfficers").find_element_by_tag_name("table")
+            for row in table_2.find_elements_by_css_selector('tr'):
+              wr.writerow([d.text for d in row.find_elements_by_css_selector('td')]) 
+          except StaleElementReferenceException:
+            csvfile.truncate(0)
+            print('StaleElementReferenceException thrown, trying again')
+            return False
 
           # Write empty row
           wr.writerow([])
 
           # 3. Phasewise Summary
-          table_3 = driver.find_element_by_css_selector("div#divContentSPPhaseSummary").find_element_by_tag_name("table")
-          for row in table_3.find_elements_by_css_selector('tr'):
-            wr.writerow([d.text for d in row.find_elements_by_css_selector('*')])
+          try:
+            table_3 = driver.find_element_by_css_selector("div#divContentSPPhaseSummary").find_element_by_tag_name("table")
+            for row in table_3.find_elements_by_css_selector('tr'):
+              wr.writerow([d.text for d in row.find_elements_by_css_selector('*')])
+          except StaleElementReferenceException:
+            csvfile.truncate(0)
+            print('StaleElementReferenceException thrown, trying again')
+            return False
             
           # Write empty row
           wr.writerow([])
@@ -92,8 +109,13 @@ def main():
             year = re.search(r"[0-9]{4}", batchwise_table_title).group(0)
             batchwise_table = element.find_element_by_css_selector('div#divContentSPPhaseSummaryYear' + year)
 
-            for row in batchwise_table.find_elements_by_css_selector('tr'):
-              wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
+            try:
+              for row in batchwise_table.find_elements_by_css_selector('tr'):
+                wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
+            except StaleElementReferenceException:
+              csvfile.truncate(0)
+              print('StaleElementReferenceException thrown, trying again')
+              return False
           
           # Quality Control Monitoring by 2nd Tier
           try:
@@ -110,11 +132,15 @@ def main():
               wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
           except NoSuchElementException:
             print('no qc3 table found')
+
+        print('Successfully scraped ' + file_name)
         return True
 
-      create_csv_file(file_name)
-
-  print('Successfully finished')
+      result = create_csv_file(file_name)
+      while not result: # continue trying until it succeeds 
+        result = create_csv_file(file_name)
+        
+  print('Successfully finished scraping all data')
 
 
 if __name__ == "__main__":
