@@ -51,6 +51,7 @@ def main():
 
       print('\n')
       print(file_name)
+      print('i=' + str(i) + ' j=' + str(j))
 
       # Returns True if data scraping was successful, False otherwise
       def create_csv_file(file_name):
@@ -66,6 +67,9 @@ def main():
             csvfile.truncate(0)
             print('StaleElementReferenceException thrown, trying again')
             return False
+          except NoSuchElementException:
+            print('no status of connectivity table found')
+            pass
 
           # Write empty row
           wr.writerow([])
@@ -79,6 +83,9 @@ def main():
             csvfile.truncate(0)
             print('StaleElementReferenceException thrown, trying again')
             return False
+          except NoSuchElementException:
+            print('no status of executing machinery table found')
+            pass
 
           # Write empty row
           wr.writerow([])
@@ -92,30 +99,37 @@ def main():
             csvfile.truncate(0)
             print('StaleElementReferenceException thrown, trying again')
             return False
+          except NoSuchElementException:
+            print('no phasewise summary found')
+            pass
             
           # Write empty row
           wr.writerow([])
 
           # 4. Batchwise Summary (there's an arbitrary number of tables for different years)
-          batchwise_tables = driver.find_elements_by_css_selector('div.box.box-warning.collapsed-box')
-          for element in batchwise_tables:
-            batchwise_table_title = element.text
-            wr.writerow([batchwise_table_title])
-            dropdown_button = element.find_element_by_css_selector('div.box-tools.pull-right').find_element_by_tag_name('button')
-            dropdown_button.click()
-            time.sleep(3)
+          try:
+            batchwise_tables = driver.find_elements_by_css_selector('div.box.box-warning.collapsed-box')
+            for element in batchwise_tables:
+              batchwise_table_title = element.text
+              wr.writerow([batchwise_table_title])
+              dropdown_button = element.find_element_by_css_selector('div.box-tools.pull-right').find_element_by_tag_name('button')
+              dropdown_button.click()
+              time.sleep(3)
 
-            # Get table for each year
-            year = re.search(r"[0-9]{4}", batchwise_table_title).group(0)
-            batchwise_table = element.find_element_by_css_selector('div#divContentSPPhaseSummaryYear' + year)
+              # Get table for each year
+              year = re.search(r"[0-9]{4}", batchwise_table_title).group(0)
+              batchwise_table = element.find_element_by_css_selector('div#divContentSPPhaseSummaryYear' + year)
 
-            try:
-              for row in batchwise_table.find_elements_by_css_selector('tr'):
-                wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
-            except StaleElementReferenceException:
-              csvfile.truncate(0)
-              print('StaleElementReferenceException thrown, trying again')
-              return False
+              try:
+                for row in batchwise_table.find_elements_by_css_selector('tr'):
+                  wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
+              except StaleElementReferenceException:
+                csvfile.truncate(0)
+                print('StaleElementReferenceException thrown, trying again')
+                return False
+          except NoSuchElementException:
+            print('no batchwise summary table found')
+            pass
           
           # Quality Control Monitoring by 2nd Tier
           try:
@@ -147,7 +161,6 @@ def main():
           break
         
   print('Successfully finished scraping all data')
-
 
 if __name__ == "__main__":
   main()
