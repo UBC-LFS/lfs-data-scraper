@@ -17,4 +17,6 @@ This script takes data from HTML tables from http://omms.nic.in/ and generates C
 
 4. Run `python road_data_scraper.py` or `python .\road_data_scraper.py`
 
+Or to start from a certain state, pass in the dropdown index as an argument. (e.g. `python road_data_scraper.py 5`)
+
 5. CSV files should be created in road_data_scraper/output/

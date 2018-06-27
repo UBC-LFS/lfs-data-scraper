@@ -2,6 +2,7 @@ import time
 import csv
 import os
 import re
+import sys
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -21,7 +22,12 @@ def main():
   # Select a state
   state_select = Select(driver.find_element_by_css_selector("select[title='State']"))
   state_options = state_select.options
-  for i in range(1, len(state_options)):
+
+  state_start_index = 1
+  if len(sys.argv) > 1:
+    state_start_index = int(sys.argv[1])
+
+  for i in range(state_start_index, len(state_options)):
     state_select.select_by_index(i)
 
     # For each state, select a district
