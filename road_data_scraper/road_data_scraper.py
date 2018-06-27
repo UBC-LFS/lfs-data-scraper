@@ -129,6 +129,9 @@ def main():
               try:
                 for row in batchwise_table.find_elements_by_css_selector('tr'):
                   wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
+                
+                # Write empty row
+                wr.writerow([])
               except StaleElementReferenceException:
                 csvfile.truncate(0)
                 print('StaleElementReferenceException thrown, trying again')
@@ -136,6 +139,9 @@ def main():
           except NoSuchElementException:
             print('no batchwise summary table found')
             pass
+
+          # Write empty row
+          wr.writerow([])
           
           # Quality Control Monitoring by 2nd Tier
           try:
@@ -144,6 +150,9 @@ def main():
               wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
           except NoSuchElementException:
             print('no qc2 table found')
+
+          # Write empty row
+          wr.writerow([])
 
           # Quality Control Monitoring by 3rd Tier
           try: 
