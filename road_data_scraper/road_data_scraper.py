@@ -68,8 +68,20 @@ def main():
           
           # 1. Status of Connectivity
           try:
-            table_1 = driver.find_element_by_css_selector("div#divContentSPConnStat").find_element_by_tag_name("table")
-            for row in table_1.find_elements_by_css_selector('tr'):
+            table_1a = driver.find_element_by_css_selector("div#divContentSPConnStat").find_element_by_tag_name("table")
+            for row in table_1a.find_elements_by_css_selector('tr'):
+              wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')]) 
+          except StaleElementReferenceException:
+            csvfile.truncate(0)
+            print('StaleElementReferenceException thrown, trying again')
+            return False
+          except NoSuchElementException:
+            print('no status of connectivity table found')
+            pass
+
+          try:
+            table_1b = driver.find_element_by_css_selector("div#divContentSPHabCoverage").find_element_by_tag_name("table")
+            for row in table_1b.find_elements_by_css_selector('tr'):
               wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')]) 
           except StaleElementReferenceException:
             csvfile.truncate(0)
