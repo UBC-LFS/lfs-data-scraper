@@ -12,6 +12,8 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import StaleElementReferenceException
 
 def main():
+  start_time = time.time()
+
   driver = webdriver.Chrome()
   driver.implicitly_wait(5) 
   driver.get('http://omms.nic.in/')
@@ -176,6 +178,10 @@ def main():
           break
         
   print('Successfully finished scraping all data')
+
+  end_time = time.time()
+  print('Total seconds taken: ')
+  print(end_time - start_time)
 
 if __name__ == "__main__":
   main()
