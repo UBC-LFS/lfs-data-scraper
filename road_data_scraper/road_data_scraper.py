@@ -68,7 +68,7 @@ def main():
           try:
             table_1 = driver.find_element_by_css_selector("div#divContentSPConnStat").find_element_by_tag_name("table")
             for row in table_1.find_elements_by_css_selector('tr'):
-              wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) 
+              wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')]) 
           except StaleElementReferenceException:
             csvfile.truncate(0)
             print('StaleElementReferenceException thrown, trying again')
@@ -84,7 +84,7 @@ def main():
           try:
             table_2 = driver.find_element_by_css_selector("div#divContentSPExecOfficers").find_element_by_tag_name("table")
             for row in table_2.find_elements_by_css_selector('tr'):
-              wr.writerow([d.text for d in row.find_elements_by_css_selector('td')]) 
+              wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')]) 
           except StaleElementReferenceException:
             csvfile.truncate(0)
             print('StaleElementReferenceException thrown, trying again')
@@ -100,7 +100,7 @@ def main():
           try:
             table_3 = driver.find_element_by_css_selector("div#divContentSPPhaseSummary").find_element_by_tag_name("table")
             for row in table_3.find_elements_by_css_selector('tr'):
-              wr.writerow([d.text for d in row.find_elements_by_css_selector('*')])
+              wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')])
           except StaleElementReferenceException:
             csvfile.truncate(0)
             print('StaleElementReferenceException thrown, trying again')
@@ -128,7 +128,7 @@ def main():
 
               try:
                 for row in batchwise_table.find_elements_by_css_selector('tr'):
-                  wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
+                  wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')]) 
                 
                 # Write empty row
                 wr.writerow([])
@@ -147,7 +147,7 @@ def main():
           try:
             table_qc2 = driver.find_element_by_css_selector("div#divContentSP2TierQM").find_element_by_tag_name("table")
             for row in table_qc2.find_elements_by_css_selector('tr'):
-              wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
+              wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')]) 
           except NoSuchElementException:
             print('no qc2 table found')
 
@@ -158,7 +158,7 @@ def main():
           try: 
             table_qc3 = driver.find_element_by_css_selector("div#divContentSP3TierQM").find_element_by_tag_name("table")
             for row in table_qc3.find_elements_by_css_selector('tr'):
-              wr.writerow([d.text for d in row.find_elements_by_css_selector('*')]) # TODO select th or td
+              wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')]) 
           except NoSuchElementException:
             print('no qc3 table found')
 
