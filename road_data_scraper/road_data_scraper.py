@@ -80,9 +80,21 @@ def main():
             pass
 
           try:
-            table_1b = driver.find_element_by_css_selector("div#divContentSPHabCoverage").find_element_by_tag_name("table")
-            for row in table_1b.find_elements_by_css_selector('tr'):
-              wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')]) 
+            table_1b = driver.find_element_by_css_selector("div#divContentSPHabCoverage").find_element_by_tag_name("table").find_element_by_tag_name("tbody")
+            # grab habitation years, use it as column name for 2 iterations  
+            habitation_years_name = None
+
+            for row in table_1b.find_elements_by_xpath('./tr'):
+              habitation_coverage_row = []
+              for d in row.find_elements_by_css_selector('th,td'):
+                if d.text.strip().startswith('Habitations'): # grab habitation years
+                  habitation_years_name = d.text.strip()
+                elif not re.search(r'\d', d.text): # not a number
+                  habitation_coverage_row.append(habitation_years_name + ' ' + d.text)
+                else: # number
+                  habitation_coverage_row.append(d.text)
+              wr.writerow(habitation_coverage_row) 
+
           except StaleElementReferenceException:
             csvfile.truncate(0)
             print('StaleElementReferenceException thrown, trying again')
