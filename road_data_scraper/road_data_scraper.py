@@ -86,7 +86,7 @@ def main():
 
             for row in table_1b.find_elements_by_xpath('./tr'):
               habitation_coverage_row = []
-              for d in row.find_elements_by_css_selector('th,td'):
+              for d in row.find_elements_by_xpath('./td'):
                 if d.text.strip().startswith('Habitations'): # grab habitation years
                   habitation_years_name = d.text.strip()
                 elif not re.search(r'\d', d.text): # not a number
