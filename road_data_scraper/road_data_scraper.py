@@ -11,7 +11,11 @@ from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import StaleElementReferenceException
 
-def main():
+def combine_csvs():
+  # TODO
+  return 0
+  
+def generate_csvs():
   start_time = time.time()
 
   driver = webdriver.Chrome()
@@ -206,6 +210,10 @@ def main():
   end_time = time.time()
   print('Total seconds taken: ')
   print(end_time - start_time)
+
+def main():
+  generate_csvs()
+  combine_csvs()
 
 if __name__ == "__main__":
   main()
