@@ -41,12 +41,12 @@ const readCSVs = async dir => {
   dir.forEach(async inputPath => {
     const file = await fsReadFile(__dirname + '/csv/' + inputPath)
     parse(file, { relax_column_count: true }, (err, data) => {
-      console.log(data)
+      // console.log(data)
       assert.equal(null, err)
       try {
         const year = data[1][5]
         const state = data[3][0].split(': ')[1]
-        const district = data[3][0].split(': ')[1]
+        const district = data[3][4].split(': ')[1]
         for (let i = 8; i <= 23; i++) {
           stream.write([
             year,
