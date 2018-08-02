@@ -101,29 +101,30 @@ const writeHeader = async () => {
 
 const readCSVs = async dir => {
   writeHeader()
-  // dir.forEach(async inputPath => {
-  //   const file = await fsReadFile(__dirname + '/csv/' + inputPath)
-  //   parse(file, { relax_column_count: true }, (err, data) => {
-  //     assert.equal(null, err)
-  //     try {
-  //       const year = data[2][1]
-  //       const crop = getLastElement(data[3][0])
-  //       const state = data[4][0].split(': ')[1]
-  //       const district = data[4][2].split(': ')[1]
-  //       for (let i = 8; i <= 23; i++) {
-  //         const sl = data[i][getFilteredColumn(data[6], 'Sl')]
-  //         const holdings = data[i][getFilteredColumn(data[6], 'Holdings')]
-  //         const irrigated = data[i][getFilteredColumn(data[6], 'Irrigated')]
-  //         const unirrigated = data[i][getFilteredColumn(data[6], 'Unirrigated')]
-  //         const total = data[i][getFilteredColumn(data[6], 'Total')]
-  //         stream.write([year, crop, state, district, sl, holdings, irrigated, unirrigated, total, inputPath] + '\r\n')
-  //       };
-  //     }
-  //     catch (e) {
-  //       console.log('invalid spreadsheets!: ', inputPath)
-  //     }
-  //   })
-  // })
+  dir.forEach(async inputPath => {
+    const file = await fsReadFile(__dirname + '/output/' + inputPath)
+    parse(file, { relax_column_count: true }, (err, data) => {
+      assert.equal(null, err) // check for errors
+      try {
+        // TODO
+        // const year = data[2][1]
+        // const crop = getLastElement(data[3][0])
+        // const state = data[4][0].split(': ')[1]
+        // const district = data[4][2].split(': ')[1]
+        // for (let i = 8; i <= 23; i++) {
+        //   const sl = data[i][getFilteredColumn(data[6], 'Sl')]
+        //   const holdings = data[i][getFilteredColumn(data[6], 'Holdings')]
+        //   const irrigated = data[i][getFilteredColumn(data[6], 'Irrigated')]
+        //   const unirrigated = data[i][getFilteredColumn(data[6], 'Unirrigated')]
+        //   const total = data[i][getFilteredColumn(data[6], 'Total')]
+        //   stream.write([year, crop, state, district, sl, holdings, irrigated, unirrigated, total, inputPath] + '\r\n')
+        // };
+      }
+      catch (e) {
+        console.log('invalid spreadsheets!: ', inputPath)
+      }
+    })
+  })
 }
 
 dir = dir.filter(file => file.includes('.csv'))
