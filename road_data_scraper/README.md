@@ -1,4 +1,4 @@
-# Instructions
+# Scraping Roads Data
 
 This script takes data from HTML tables from http://omms.nic.in/ and generates CSV files.
 
@@ -20,3 +20,9 @@ This script takes data from HTML tables from http://omms.nic.in/ and generates C
 Or to start from a certain state, pass in the dropdown index as an argument. (e.g. `python road_data_scraper.py 5`)
 
 5. CSV files should be created in road_data_scraper/output/
+
+# Merging CSVs
+
+1. Type `npm install`
+
+2. Run `npm run start`

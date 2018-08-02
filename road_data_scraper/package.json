@@ -1,0 +1,16 @@
+{
+  "name": "xlsxtocsv",
+  "version": "1.0.0",
+  "description": "",
+  "main": "csv_merge.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node csv_merge.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "csv-parse": "^2.0.4",
+    "node-xlsx": "^0.12.0"
+  }
+}
