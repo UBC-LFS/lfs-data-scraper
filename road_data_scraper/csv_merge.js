@@ -32,7 +32,6 @@ const writeHeader = async () => {
     'Upgradation (Grand Total)',
     'Total number of Habitations (As on 01-04-2000) (1000+)',
     'Total Number of Habitations (As on 01-04-2000) (999-500)',
-    'Total Number of Habitations (As on 01-04-2000) (499-250)',
     'Total Number of Habitations (As on 01-04-2000) (Eligible 499-250)',
     'Total Number of Habitations (As on 01-04-2000) (Total Eligible)',
     'Total Number of Habitations (As on 01-04-2000) (Total 499-250)',
@@ -130,6 +129,14 @@ const readCSVs = async dir => {
             TotalNumberOfConnectedHabitationsAsOn01042000 = data[i].slice(1)
           } else if(data[i].length > 0 && data[i][0].includes('Total number of Connected Habitations Entered')) {
             TotalNumberOfConnectedHabitationsEntered = data[i].slice(1)
+          } else if(data[i].length > 0 && data[i][0].includes('Total number of UnConnected Habitations (As on 01-04-2000)')) {
+            TotalNumberOfUnConnectedHabitations01042000 = data[i].slice(1)
+          } else if(data[i].length > 0 && data[i][0].includes('Total number of UnConnected Habitations Entered')) {
+            TotalNumberOfUnConnectedHabitationsEntered = data[i].slice(1)
+          } else if(data[i].length > 0 && data[i][0].includes('Status of connectivity of Habitations covered')) {
+            StatusOfConnectivityUnderStateScheme = data[i].slice(1)
+          } else if(data[i].length > 0 && data[i][0].includes('No of Unconnected Habs after deducting Habs')) {
+            NoOfUnconnectedHabitations = data[i].slice(1)
           }
         }
 
@@ -173,7 +180,11 @@ const readCSVs = async dir => {
               TotalNumberOfHabitationsEnteredAsOn01042000,
               TotalNumberOfHabitationsEntered,
               TotalNumberOfConnectedHabitationsAsOn01042000,
-              TotalNumberOfConnectedHabitationsEntered
+              TotalNumberOfConnectedHabitationsEntered,
+              TotalNumberOfUnConnectedHabitations01042000,
+              TotalNumberOfUnConnectedHabitationsEntered,
+              StatusOfConnectivityUnderStateScheme,
+              NoOfUnconnectedHabitations,
             ) + '\r\n')
         };
       }
