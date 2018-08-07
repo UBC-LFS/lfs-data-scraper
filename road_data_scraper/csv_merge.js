@@ -109,6 +109,29 @@ const readCSVs = async dir => {
         let splitIndex = inputPath.indexOf('-');
         const state = inputPath.slice(0,splitIndex).trim();
         const district = inputPath.slice(splitIndex + 1).split('.csv')[0].trim();
+     
+        // data repeated for each state + district (initially -1, changed to actual values if found in individual CSVs)
+        let TotalNumberOfHabitationsEnteredAsOn01042000 = [-1,-1,-1,-1, -1,-1,-1,-1]
+        let TotalNumberOfHabitationsEntered = [-1,-1,-1,-1, -1,-1,-1,-1]
+        let TotalNumberOfConnectedHabitationsAsOn01042000 = [-1,-1,-1,-1, -1,-1,-1,-1]
+        let TotalNumberOfConnectedHabitationsEntered = [-1,-1,-1,-1, -1,-1,-1,-1]
+        
+        let TotalNumberOfUnConnectedHabitations01042000 = [-1,-1,-1,-1, -1,-1,-1,-1]
+        let TotalNumberOfUnConnectedHabitationsEntered = [-1,-1,-1,-1, -1,-1,-1,-1]
+        let StatusOfConnectivityUnderStateScheme = [-1,-1,-1,-1, -1,-1,-1,-1]
+        let NoOfUnconnectedHabitations = [-1,-1,-1,-1, -1,-1,-1,-1]
+
+        for(let i = 0; i < data.length; i++) {
+          if(data[i].length > 0 && data[i][0].includes('Total number of Habitations (As on 01-04-2000)')) {
+            TotalNumberOfHabitationsEnteredAsOn01042000 = data[i].slice(1)
+          } else if(data[i].length > 0 && data[i][0].includes('Total number of Habitations Entered')) {
+            TotalNumberOfHabitationsEntered = data[i].slice(1)
+          } else if(data[i].length > 0 && data[i][0].includes('Total number of Connected Habitations (As on 01-04-2000)')) {
+            TotalNumberOfConnectedHabitationsAsOn01042000 = data[i].slice(1)
+          } else if(data[i].length > 0 && data[i][0].includes('Total number of Connected Habitations Entered')) {
+            TotalNumberOfConnectedHabitationsEntered = data[i].slice(1)
+          }
+        }
 
         // find the start of the data for 'Habitations covered by PMGSY: 2xxx - 2xxx
         let habitationsCoveredStartIndex = 0;
@@ -137,25 +160,25 @@ const readCSVs = async dir => {
           const ncE249 = data[habitationsCoveredStartIndex + i*2][6]
           const uE249  = data[habitationsCoveredStartIndex + i*2][6]
 
-          const ncT499 = data[habitationsCoveredStartIndex + i*2][5]
-          const uT499  = data[habitationsCoveredStartIndex + i*2][5]
-          const ncE249 = data[habitationsCoveredStartIndex + i*2][6]
-          const uE249  = data[habitationsCoveredStartIndex + i*2][6]
-
-          const ncL250 = data[habitationsCoveredStartIndex + i*2][5]
-          const uL250  = data[habitationsCoveredStartIndex + i*2][5]
-          const ncGT = data[habitationsCoveredStartIndex + i*2][6]
-          const uGT  = data[habitationsCoveredStartIndex + i*2][6]
+          const ncL250 = data[habitationsCoveredStartIndex + i*2][7]
+          const uL250  = data[habitationsCoveredStartIndex + i*2][7]
+          const ncGT = data[habitationsCoveredStartIndex + i*2][8]
+          const uGT  = data[habitationsCoveredStartIndex + i*2][8]
           
           stream.write([state, district, years, 
             nc1000, u1000, nc999, u999,
             ncE499, uE499, ncTE, uTE,
             ncT499, uT499, ncE249, uE249,
-            ncL250, uL250, ncGT, uGT] + '\r\n')
+            ncL250, uL250, ncGT, uGT].concat(
+              TotalNumberOfHabitationsEnteredAsOn01042000,
+              TotalNumberOfHabitationsEntered,
+              TotalNumberOfConnectedHabitationsAsOn01042000,
+              TotalNumberOfConnectedHabitationsEntered
+            ) + '\r\n')
         };
       }
       catch (e) {
-        console.log('invalid spreadsheets!: ', inputPath)
+        console.log('Error parsing ' + inputPath + '\n' + e)
       }
     })
   })
