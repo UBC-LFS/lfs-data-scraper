@@ -60,10 +60,10 @@ const writeHeader = async () => {
     'Total Number of Connected Habitations Entered (Eligible 499 - 250)',
     'Total Number of Connected Habitations Entered (Total Eligible)',
     'Total Number of Connected Habitations Entered (Total 499 - 250)',
-    'Total Number of Connected Habitations Entered (Eligible 249 - 100',
+    'Total Number of Connected Habitations Entered (Eligible 249 - 100)',
     'Total Number of Connected Habitations Entered (Less Than 250)',
     'Total Number of Connected Habitations Entered (Grand Total)',
-    'Total Number of Unconnected Habitations (As on 01-04-2000) (1000+',
+    'Total Number of Unconnected Habitations (As on 01-04-2000) (1000+)',
     'Total Number of Unconnected Habitations (As on 01-04-2000) (999 - 500)',
     'Total Number of Unconnected Habitations (As on 01-04-2000) (Eligible 499 - 250)',
     'Total Number of Unconnected Habitations (As on 01-04-2000) (Total Eligible)',
@@ -106,19 +106,29 @@ const readCSVs = async dir => {
     parse(file, { relax_column_count: true }, (err, data) => {
       assert.equal(null, err) // check for errors
       try {
-        // TODO
-        // const year = data[2][1]
-        // const crop = getLastElement(data[3][0])
-        // const state = data[4][0].split(': ')[1]
-        // const district = data[4][2].split(': ')[1]
-        // for (let i = 8; i <= 23; i++) {
-        //   const sl = data[i][getFilteredColumn(data[6], 'Sl')]
-        //   const holdings = data[i][getFilteredColumn(data[6], 'Holdings')]
-        //   const irrigated = data[i][getFilteredColumn(data[6], 'Irrigated')]
-        //   const unirrigated = data[i][getFilteredColumn(data[6], 'Unirrigated')]
-        //   const total = data[i][getFilteredColumn(data[6], 'Total')]
-        //   stream.write([year, crop, state, district, sl, holdings, irrigated, unirrigated, total, inputPath] + '\r\n')
-        // };
+        let splitIndex = inputPath.indexOf('-');
+        const state = inputPath.slice(0,splitIndex).trim();
+        const district = inputPath.slice(splitIndex + 1).split('.csv')[0].trim();
+
+        // find the start of the data for 'Habitations covered by PMGSY: 2xxx - 2xxx
+        let habitationsCoveredStartIndex = 0;
+        for(let i = 0; i < data.length; i++) {
+          if(data[i].length > 0 && data[i][0].includes('Habitations covered by PMGSY: 2000')) {
+            habitationsCoveredStartIndex = i;
+            break;
+          }
+        }
+        
+        for (let i = 0; i <= 18; i++) {
+          const years = (2000 + i).toString() + '-' + (2000 + i + 1).toString()
+
+          const nc1000 = data[habitationsCoveredStartIndex + i*2][1]
+          const u1000 =  data[habitationsCoveredStartIndex + i*2][1]
+          const nc999 = data[habitationsCoveredStartIndex + i*2][2]
+          const u999  = data[habitationsCoveredStartIndex + i*2][2]
+          
+          stream.write([state,district,years, nc1000, u1000, nc999, u999] + '\r\n')
+        };
       }
       catch (e) {
         console.log('invalid spreadsheets!: ', inputPath)
@@ -128,7 +138,6 @@ const readCSVs = async dir => {
 }
 
 dir = dir.filter(file => file.includes('.csv'))
-console.log(dir)
 readCSVs(dir)
 
 
