@@ -118,16 +118,40 @@ const readCSVs = async dir => {
             break;
           }
         }
-        
+
         for (let i = 0; i <= 18; i++) {
           const years = (2000 + i).toString() + '-' + (2000 + i + 1).toString()
 
           const nc1000 = data[habitationsCoveredStartIndex + i*2][1]
-          const u1000 =  data[habitationsCoveredStartIndex + i*2][1]
-          const nc999 = data[habitationsCoveredStartIndex + i*2][2]
-          const u999  = data[habitationsCoveredStartIndex + i*2][2]
+          const u1000  = data[habitationsCoveredStartIndex + i*2][1]
+          const nc999  = data[habitationsCoveredStartIndex + i*2][2]
+          const u999   = data[habitationsCoveredStartIndex + i*2][2]
+
+          const ncE499 = data[habitationsCoveredStartIndex + i*2][3]
+          const uE499  = data[habitationsCoveredStartIndex + i*2][3]
+          const ncTE = data[habitationsCoveredStartIndex + i*2][4]
+          const uTE  = data[habitationsCoveredStartIndex + i*2][4]
+
+          const ncT499 = data[habitationsCoveredStartIndex + i*2][5]
+          const uT499  = data[habitationsCoveredStartIndex + i*2][5]
+          const ncE249 = data[habitationsCoveredStartIndex + i*2][6]
+          const uE249  = data[habitationsCoveredStartIndex + i*2][6]
+
+          const ncT499 = data[habitationsCoveredStartIndex + i*2][5]
+          const uT499  = data[habitationsCoveredStartIndex + i*2][5]
+          const ncE249 = data[habitationsCoveredStartIndex + i*2][6]
+          const uE249  = data[habitationsCoveredStartIndex + i*2][6]
+
+          const ncL250 = data[habitationsCoveredStartIndex + i*2][5]
+          const uL250  = data[habitationsCoveredStartIndex + i*2][5]
+          const ncGT = data[habitationsCoveredStartIndex + i*2][6]
+          const uGT  = data[habitationsCoveredStartIndex + i*2][6]
           
-          stream.write([state,district,years, nc1000, u1000, nc999, u999] + '\r\n')
+          stream.write([state, district, years, 
+            nc1000, u1000, nc999, u999,
+            ncE499, uE499, ncTE, uTE,
+            ncT499, uT499, ncE249, uE249,
+            ncL250, uL250, ncGT, uGT] + '\r\n')
         };
       }
       catch (e) {

@@ -26,3 +26,5 @@ Or to start from a certain state, pass in the dropdown index as an argument. (e.
 1. Type `npm install`
 
 2. Run `npm run start`
+
+3. 'Status of Connectivity.csv' will be created in the /output/ directory
