@@ -10,10 +10,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import StaleElementReferenceException
-
-def combine_csvs():
-  # TODO
-  return 0
   
 def generate_csvs():
   start_time = time.time()
@@ -91,7 +87,9 @@ def generate_csvs():
             for row in table_1b.find_elements_by_xpath('./tr'):
               habitation_coverage_row = []
               for d in row.find_elements_by_xpath('./td'):
-                if d.text.strip().startswith('Habitations'): # grab habitation years
+                if d.text.strip().startswith('Total') or d.text.strip().startswith('Balance'):
+                  habitation_years_name = d.text.strip()
+                elif d.text.strip().startswith('Habitations'): # grab habitation years
                   habitation_years_name = d.text.strip()
                 elif not re.search(r'\d', d.text): # not a number
                   habitation_coverage_row.append(habitation_years_name + ' ' + d.text)
@@ -110,21 +108,21 @@ def generate_csvs():
           # Write empty row
           wr.writerow([])
 
-          # 2. Status of Executing Machinery
-          try:
-            table_2 = driver.find_element_by_css_selector("div#divContentSPExecOfficers").find_element_by_tag_name("table")
-            for row in table_2.find_elements_by_css_selector('tr'):
-              wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')]) 
-          except StaleElementReferenceException:
-            csvfile.truncate(0)
-            print('StaleElementReferenceException thrown, trying again')
-            return False
-          except NoSuchElementException:
-            print('no status of executing machinery table found')
-            pass
+          # # 2. Status of Executing Machinery
+          # try:
+          #   table_2 = driver.find_element_by_css_selector("div#divContentSPExecOfficers").find_element_by_tag_name("table")
+          #   for row in table_2.find_elements_by_css_selector('tr'):
+          #     wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')]) 
+          # except StaleElementReferenceException:
+          #   csvfile.truncate(0)
+          #   print('StaleElementReferenceException thrown, trying again')
+          #   return False
+          # except NoSuchElementException:
+          #   print('no status of executing machinery table found')
+          #   pass
 
-          # Write empty row
-          wr.writerow([])
+          # # Write empty row
+          # wr.writerow([])
 
           # 3. Phasewise Summary
           try:
@@ -213,7 +211,6 @@ def generate_csvs():
 
 def main():
   generate_csvs()
-  combine_csvs()
 
 if __name__ == "__main__":
   main()
