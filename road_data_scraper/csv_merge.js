@@ -10,6 +10,7 @@ const fsReadFile = promisify(fs.readFile)
 const outputName = 'Status of Connectivity.csv'
 const stream = fs.createWriteStream(__dirname + '/output/' + outputName, { flags: 'a' })
 
+
 const writeHeader = async () => {
   const header = [
     'District',
@@ -138,6 +139,8 @@ const readCSVs = async dir => {
             StatusOfConnectivityUnderStateScheme = data[i].slice(1)
           } else if(data[i].length > 0 && data[i][0].includes('No of Unconnected Habs after deducting Habs')) {
             NoOfUnconnectedHabitations = data[i].slice(1)
+          } else {
+            console.log('No Match');
           }
         }
 
@@ -196,7 +199,11 @@ const readCSVs = async dir => {
   })
 }
 
+
 dir = dir.filter(file => file.includes('.csv'))
+
+console.time('merging section 1')
 readCSVs(dir)
+console.timeEnd('merging section 1')
 
 
