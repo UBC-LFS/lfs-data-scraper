@@ -140,55 +140,55 @@ def generate_csvs():
           # Write empty row
           wr.writerow([])
 
-          # 4. Batchwise Summary (there's an arbitrary number of tables for different years)
-          try:
-            batchwise_tables = driver.find_elements_by_css_selector('div.box.box-warning.collapsed-box')
-            for element in batchwise_tables:
-              batchwise_table_title = element.text
-              wr.writerow([batchwise_table_title])
-              dropdown_button = element.find_element_by_css_selector('div.box-tools.pull-right').find_element_by_tag_name('button')
-              dropdown_button.click()
-              time.sleep(3)
+          # # 4. Batchwise Summary (there's an arbitrary number of tables for different years)
+          # try:
+          #   batchwise_tables = driver.find_elements_by_css_selector('div.box.box-warning.collapsed-box')
+          #   for element in batchwise_tables:
+          #     batchwise_table_title = element.text
+          #     wr.writerow([batchwise_table_title])
+          #     dropdown_button = element.find_element_by_css_selector('div.box-tools.pull-right').find_element_by_tag_name('button')
+          #     dropdown_button.click()
+          #     time.sleep(3)
 
-              # Get table for each year
-              year = re.search(r"[0-9]{4}", batchwise_table_title).group(0)
-              batchwise_table = element.find_element_by_css_selector('div#divContentSPPhaseSummaryYear' + year)
+          #     # Get table for each year
+          #     year = re.search(r"[0-9]{4}", batchwise_table_title).group(0)
+          #     batchwise_table = element.find_element_by_css_selector('div#divContentSPPhaseSummaryYear' + year)
 
-              try:
-                for row in batchwise_table.find_elements_by_css_selector('tr'):
-                  wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')]) 
+          #     try:
+          #       for row in batchwise_table.find_elements_by_css_selector('tr'):
+          #         wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')]) 
                 
-                # Write empty row
-                wr.writerow([])
-              except StaleElementReferenceException:
-                csvfile.truncate(0)
-                print('StaleElementReferenceException thrown, trying again')
-                return False
-          except NoSuchElementException:
-            print('no batchwise summary table found')
-            pass
+          #       # Write empty row
+          #       wr.writerow([])
+          #     except StaleElementReferenceException:
+          #       csvfile.truncate(0)
+          #       print('StaleElementReferenceException thrown, trying again')
+          #       return False
+          # except NoSuchElementException:
+          #   print('no batchwise summary table found')
+          #   pass
 
-          # Write empty row
-          wr.writerow([])
+          # # Write empty row
+          # wr.writerow([])
           
-          # Quality Control Monitoring by 2nd Tier
-          try:
-            table_qc2 = driver.find_element_by_css_selector("div#divContentSP2TierQM").find_element_by_tag_name("table")
-            for row in table_qc2.find_elements_by_css_selector('tr'):
-              wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')]) 
-          except NoSuchElementException:
-            print('no qc2 table found')
+          # # Quality Control Monitoring by 2nd Tier
+          # try:
+          #   table_qc2 = driver.find_element_by_css_selector("div#divContentSP2TierQM").find_element_by_tag_name("table")
+          #   for row in table_qc2.find_elements_by_css_selector('tr'):
+          #     wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')]) 
+          # except NoSuchElementException:
+          #   print('no qc2 table found')
 
-          # Write empty row
-          wr.writerow([])
+          # # Write empty row
+          # wr.writerow([])
 
-          # Quality Control Monitoring by 3rd Tier
-          try: 
-            table_qc3 = driver.find_element_by_css_selector("div#divContentSP3TierQM").find_element_by_tag_name("table")
-            for row in table_qc3.find_elements_by_css_selector('tr'):
-              wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')]) 
-          except NoSuchElementException:
-            print('no qc3 table found')
+          # # Quality Control Monitoring by 3rd Tier
+          # try: 
+          #   table_qc3 = driver.find_element_by_css_selector("div#divContentSP3TierQM").find_element_by_tag_name("table")
+          #   for row in table_qc3.find_elements_by_css_selector('tr'):
+          #     wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')]) 
+          # except NoSuchElementException:
+          #   print('no qc3 table found')
 
         print('Successfully scraped ' + file_name)
         return True
