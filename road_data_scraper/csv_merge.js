@@ -153,24 +153,24 @@ const readCSVs = async dir => {
           const years = (2000 + i).toString() + '-' + (2000 + i + 1).toString()
 
           const nc1000 = data[habitationsCoveredStartIndex + i*2][1]
-          const u1000  = data[habitationsCoveredStartIndex + i*2][1]
+          const u1000  = data[habitationsCoveredStartIndex + i*2 + 1][1]
           const nc999  = data[habitationsCoveredStartIndex + i*2][2]
-          const u999   = data[habitationsCoveredStartIndex + i*2][2]
+          const u999   = data[habitationsCoveredStartIndex + i*2 + 1][2]
 
           const ncE499 = data[habitationsCoveredStartIndex + i*2][3]
-          const uE499  = data[habitationsCoveredStartIndex + i*2][3]
+          const uE499  = data[habitationsCoveredStartIndex + i*2 + 1][3]
           const ncTE = data[habitationsCoveredStartIndex + i*2][4]
-          const uTE  = data[habitationsCoveredStartIndex + i*2][4]
+          const uTE  = data[habitationsCoveredStartIndex + i*2 + 1][4]
 
           const ncT499 = data[habitationsCoveredStartIndex + i*2][5]
-          const uT499  = data[habitationsCoveredStartIndex + i*2][5]
+          const uT499  = data[habitationsCoveredStartIndex + i*2 + 1][5]
           const ncE249 = data[habitationsCoveredStartIndex + i*2][6]
-          const uE249  = data[habitationsCoveredStartIndex + i*2][6]
+          const uE249  = data[habitationsCoveredStartIndex + i*2 + 1][6]
 
           const ncL250 = data[habitationsCoveredStartIndex + i*2][7]
-          const uL250  = data[habitationsCoveredStartIndex + i*2][7]
+          const uL250  = data[habitationsCoveredStartIndex + i*2 + 1][7]
           const ncGT = data[habitationsCoveredStartIndex + i*2][8]
-          const uGT  = data[habitationsCoveredStartIndex + i*2][8]
+          const uGT  = data[habitationsCoveredStartIndex + i*2 + 1][8]
           
           stream.write([state, district, years, 
             nc1000, u1000, nc999, u999,
