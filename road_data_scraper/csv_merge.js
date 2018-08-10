@@ -6,8 +6,10 @@ const assert = require('assert')
 
 const fsWriteFile = promisify(fs.writeFile)
 const fsReadFile = promisify(fs.readFile)
+
 const outputName = 'Status of Connectivity.csv'
 const stream = fs.createWriteStream(__dirname + '/' + outputName, { flags: 'a' })
+
 
 const writeHeader = async () => {
   const header = [
@@ -39,16 +41,16 @@ const writeHeader = async () => {
     'Total Number of Habitations (As on 01-04-2000) (Less Than 250)',
     'Total Number of Habitations (As on 01-04-2000) (Grand Total)',
     'Total Number of Habitations Entered (1000+)',
-    'Total Number of Habitations Entered (999-500)',
-    'Total Number of Habitations Entered (Eligible 499-250)',
+    'Total Number of Habitations Entered (999 - 500)',
+    'Total Number of Habitations Entered (Eligible 499 - 250)',
     'Total Number of Habitations Entered (Total Eligible)',
-    'Total Number of Habitations Entered (Total 499-250)',
-    'Total Number of Habitations Entered (Eligible 249-100)',
+    'Total Number of Habitations Entered (Total 499 - 250)',
+    'Total Number of Habitations Entered (Eligible 249 - 100)',
     'Total Number of Habitations Entered (Less Than 250)',
     'Total Number of Habitations Entered (Grand Total)',
     'Total Number of Connected Habitations (As on 01-04-2000) (1000+)',
-    'Total Number of Connected Habitations (As on 01-04-2000) (999-500)',
-    'Total Number of Connected Habitations (As on 01-04-2000) (Eligible 499-250)',
+    'Total Number of Connected Habitations (As on 01-04-2000) (999 - 500)',
+    'Total Number of Connected Habitations (As on 01-04-2000) (Eligible 499 - 250)',
     'Total Number of Connected Habitations (As on 01-04-2000) (Total Eligible)',
     'Total Number of Connected Habitations (As on 01-04-2000) (Total 499 - 250)',
     'Total Number of Connected Habitations (As on 01-04-2000) (Eligible 249 - 100)',
@@ -137,6 +139,8 @@ const readCSVs = async dir => {
             StatusOfConnectivityUnderStateScheme = data[i].slice(1)
           } else if(data[i].length > 0 && data[i][0].includes('No of Unconnected Habs after deducting Habs')) {
             NoOfUnconnectedHabitations = data[i].slice(1)
+          } else {
+            console.log('No Match');
           }
         }
 
@@ -195,7 +199,11 @@ const readCSVs = async dir => {
   })
 }
 
+
 dir = dir.filter(file => file.includes('.csv'))
+
+console.time('merging section 1')
 readCSVs(dir)
+console.timeEnd('merging section 1')
 
 
