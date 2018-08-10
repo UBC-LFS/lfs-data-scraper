@@ -7,7 +7,7 @@ const assert = require('assert')
 const fsWriteFile = promisify(fs.writeFile)
 const fsReadFile = promisify(fs.readFile)
 const outputName = 'Status of Connectivity.csv'
-const stream = fs.createWriteStream(__dirname + '/output/' + outputName, { flags: 'a' })
+const stream = fs.createWriteStream(__dirname + '/' + outputName, { flags: 'a' })
 
 const writeHeader = async () => {
   const header = [
@@ -95,7 +95,7 @@ const writeHeader = async () => {
     'No of Unconnected Habs after deducting Habs benefitted under State Programme (Less Than 250)',
     'No of Unconnected Habs after deducting Habs benefitted under State Programme (Grand Total)',
   ]
-  await fsWriteFile(__dirname + '/output/' + outputName, header + '\r\n')
+  stream.write(header + '\r\n')
 }
 
 const readCSVs = async dir => {
