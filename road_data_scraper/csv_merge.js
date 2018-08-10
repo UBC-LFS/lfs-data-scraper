@@ -139,8 +139,6 @@ const readCSVs = async dir => {
             StatusOfConnectivityUnderStateScheme = data[i].slice(1)
           } else if(data[i].length > 0 && data[i][0].includes('No of Unconnected Habs after deducting Habs')) {
             NoOfUnconnectedHabitations = data[i].slice(1)
-          } else {
-            console.log('No Match');
           }
         }
 
