@@ -122,7 +122,7 @@ def generate_csvs():
           try:
             table_3 = driver.find_element_by_css_selector("div#divContentSPPhaseSummary").find_element_by_tag_name("table")
             for row in table_3.find_elements_by_css_selector('tr'):
-              wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')])
+              wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td') if not d.text.strip().startswith('Note') and not d.text.strip().startswith('Total No. of Sanctioned Works = ') ]) # filter out the notes
           except StaleElementReferenceException:
             csvfile.truncate(0)
             print('StaleElementReferenceException thrown, trying again')
