@@ -25,11 +25,7 @@ def generate_csvs():
   state_select = Select(driver.find_element_by_css_selector("select[title='State']"))
   state_options = state_select.options
 
-  state_start_index = 1
-  if len(sys.argv) > 1:
-    state_start_index = int(sys.argv[1])
-
-  for i in range(state_start_index, len(state_options)):
+  for i in range(1, len(state_options)):
     state_select.select_by_index(i)
 
     # For each state, select a district
@@ -67,46 +63,46 @@ def generate_csvs():
           wr = csv.writer(csvfile)
           
           # 1. Status of Connectivity
-          try:
-            table_1a = driver.find_element_by_css_selector("div#divContentSPConnStat").find_element_by_tag_name("table")
-            for row in table_1a.find_elements_by_css_selector('tr'):
-              wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')]) 
-          except StaleElementReferenceException:
-            csvfile.truncate(0)
-            print('StaleElementReferenceException thrown, trying again')
-            return False
-          except NoSuchElementException:
-            print('no status of connectivity table found')
-            pass
+          # try:
+          #   table_1a = driver.find_element_by_css_selector("div#divContentSPConnStat").find_element_by_tag_name("table")
+          #   for row in table_1a.find_elements_by_css_selector('tr'):
+          #     wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')]) 
+          # except StaleElementReferenceException:
+          #   csvfile.truncate(0)
+          #   print('StaleElementReferenceException thrown, trying again')
+          #   return False
+          # except NoSuchElementException:
+          #   print('no status of connectivity table found')
+          #   pass
 
-          try:
-            table_1b = driver.find_element_by_css_selector("div#divContentSPHabCoverage").find_element_by_tag_name("table").find_element_by_tag_name("tbody")
-            # grab habitation years, use it as column name for 2 iterations  
-            habitation_years_name = None
+          # try:
+          #   table_1b = driver.find_element_by_css_selector("div#divContentSPHabCoverage").find_element_by_tag_name("table").find_element_by_tag_name("tbody")
+          #   # grab habitation years, use it as column name for 2 iterations  
+          #   habitation_years_name = None
 
-            for row in table_1b.find_elements_by_xpath('./tr'):
-              habitation_coverage_row = []
-              for d in row.find_elements_by_xpath('./td'):
-                if d.text.strip().startswith('Total') or d.text.strip().startswith('Balance'):
-                  habitation_years_name = d.text.strip()
-                elif d.text.strip().startswith('Habitations'): # grab habitation years
-                  habitation_years_name = d.text.strip()
-                elif not re.search(r'\d', d.text): # not a number
-                  habitation_coverage_row.append(habitation_years_name + ' ' + d.text)
-                else: # number
-                  habitation_coverage_row.append(d.text)
-              wr.writerow(habitation_coverage_row) 
+          #   for row in table_1b.find_elements_by_xpath('./tr'):
+          #     habitation_coverage_row = []
+          #     for d in row.find_elements_by_xpath('./td'):
+          #       if d.text.strip().startswith('Total') or d.text.strip().startswith('Balance'):
+          #         habitation_years_name = d.text.strip()
+          #       elif d.text.strip().startswith('Habitations'): # grab habitation years
+          #         habitation_years_name = d.text.strip()
+          #       elif not re.search(r'\d', d.text): # not a number
+          #         habitation_coverage_row.append(habitation_years_name + ' ' + d.text)
+          #       else: # number
+          #         habitation_coverage_row.append(d.text)
+          #     wr.writerow(habitation_coverage_row) 
 
-          except StaleElementReferenceException:
-            csvfile.truncate(0)
-            print('StaleElementReferenceException thrown, trying again')
-            return False
-          except NoSuchElementException:
-            print('no status of connectivity table found')
-            pass
+          # except StaleElementReferenceException:
+          #   csvfile.truncate(0)
+          #   print('StaleElementReferenceException thrown, trying again')
+          #   return False
+          # except NoSuchElementException:
+          #   print('no status of connectivity table found')
+          #   pass
 
-          # Write empty row
-          wr.writerow([])
+          # # Write empty row
+          # wr.writerow([])
 
           # # 2. Status of Executing Machinery
           # try:
