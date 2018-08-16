@@ -112,15 +112,15 @@ const readCSVs = async dir => {
         const district = inputPath.slice(splitIndex + 1).split('.csv')[0].trim();
      
         // data repeated for each state + district (initially -1, changed to actual values if found in individual CSVs)
-        let TotalNumberOfHabitationsEnteredAsOn01042000 = [-1,-1,-1,-1, -1,-1,-1,-1]
-        let TotalNumberOfHabitationsEntered = [-1,-1,-1,-1, -1,-1,-1,-1]
-        let TotalNumberOfConnectedHabitationsAsOn01042000 = [-1,-1,-1,-1, -1,-1,-1,-1]
-        let TotalNumberOfConnectedHabitationsEntered = [-1,-1,-1,-1, -1,-1,-1,-1]
+        let TotalNumberOfHabitationsEnteredAsOn01042000 = ['NA','NA','NA','NA','NA','NA','NA','NA']
+        let TotalNumberOfHabitationsEntered = ['NA','NA','NA','NA','NA','NA','NA','NA']
+        let TotalNumberOfConnectedHabitationsAsOn01042000 = ['NA','NA','NA','NA','NA','NA','NA','NA']
+        let TotalNumberOfConnectedHabitationsEntered = ['NA','NA','NA','NA','NA','NA','NA','NA']
         
-        let TotalNumberOfUnConnectedHabitations01042000 = [-1,-1,-1,-1, -1,-1,-1,-1]
-        let TotalNumberOfUnConnectedHabitationsEntered = [-1,-1,-1,-1, -1,-1,-1,-1]
-        let StatusOfConnectivityUnderStateScheme = [-1,-1,-1,-1, -1,-1,-1,-1]
-        let NoOfUnconnectedHabitations = [-1,-1,-1,-1, -1,-1,-1,-1]
+        let TotalNumberOfUnConnectedHabitations01042000 = ['NA','NA','NA','NA','NA','NA','NA','NA']
+        let TotalNumberOfUnConnectedHabitationsEntered = ['NA','NA','NA','NA','NA','NA','NA','NA']
+        let StatusOfConnectivityUnderStateScheme = ['NA','NA','NA','NA','NA','NA','NA','NA']
+        let NoOfUnconnectedHabitations = ['NA','NA','NA','NA','NA','NA','NA','NA']
 
         for(let i = 0; i < data.length; i++) {
           if(data[i].length > 0 && data[i][0].includes('Total number of Habitations (As on 01-04-2000)')) {
