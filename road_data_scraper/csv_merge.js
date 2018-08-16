@@ -88,7 +88,7 @@ const writeHeader = async () => {
     'Status of Connectivity of Habitations covered under State Scheme (Eligible 249 - 100)',
     'Status of Connectivity of Habitations covered under State Scheme (Less Than 250)',
     'Status of Connectivity of Habitations covered under State Scheme (Grand Total)',
-    'No of Unconnected Habs after deducting Habs benefitted under State Programme (1000+)	',
+    'No of Unconnected Habs after deducting Habs benefitted under State Programme (1000+)',
     'No of Unconnected Habs after deducting Habs benefitted under State Programme (999 - 500)',
     'No of Unconnected Habs after deducting Habs benefitted under State Programme (Eligible 499 - 250)',
     'No of Unconnected Habs after deducting Habs benefitted under State Programme (Total Eligible)',
@@ -186,7 +186,7 @@ const readCSVs = async dir => {
               TotalNumberOfUnConnectedHabitations01042000,
               TotalNumberOfUnConnectedHabitationsEntered,
               StatusOfConnectivityUnderStateScheme,
-              NoOfUnconnectedHabitations,
+              NoOfUnconnectedHabitations
             ) + '\r\n')
         };
       }

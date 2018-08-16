@@ -21,6 +21,8 @@ def generate_csvs():
   completed_road_works_button = driver.find_element_by_css_selector("div.small-box.bg-red > a")
   completed_road_works_button.click()
 
+  failed_files = []
+
   # Select a state
   state_select = Select(driver.find_element_by_css_selector("select[title='State']"))
   state_options = state_select.options
@@ -52,10 +54,6 @@ def generate_csvs():
       state_name = state_select.first_selected_option.text
       district_name = district_select.first_selected_option.text
       file_name = state_name + ' - ' + district_name + '.csv'
-
-      print('\n')
-      print(file_name)
-      print('i=' + str(i) + ' j=' + str(j))
 
       # Returns True if data scraping was successful, False otherwise
       def create_csv_file(file_name):
@@ -124,7 +122,7 @@ def generate_csvs():
           try:
             table_3 = driver.find_element_by_css_selector("div#divContentSPPhaseSummary").find_element_by_tag_name("table")
             for row in table_3.find_elements_by_css_selector('tr'):
-              wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')])
+              wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td') if not d.text.strip().startswith('Note') and not d.text.strip().startswith('Total No. of Sanctioned Works = ') ]) # filter out the notes
           except StaleElementReferenceException:
             csvfile.truncate(0)
             print('StaleElementReferenceException thrown, trying again')
@@ -196,10 +194,13 @@ def generate_csvs():
           result = create_csv_file(file_name)
           attempt -= 1
         else:
-          print('Failed to scrape ' + file_name)
+          failed_files.append(file_name)
           break
         
-  print('Successfully finished scraping all data')
+  if not failed_files:
+    print('Successfully finished scraping all data')
+  else:
+    print(failed_fies)
 
   end_time = time.time()
   print('Total seconds taken: ')
