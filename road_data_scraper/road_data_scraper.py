@@ -42,7 +42,7 @@ def generate_csvs():
       Select(driver.find_element_by_css_selector("select[name='Agency']")).select_by_index(0)
 
       view_details_button = driver.find_element_by_css_selector("input#btnViewSPDetails")
-      time.sleep(3)
+      time.sleep(2)
       view_details_button.click()
       time.sleep(3) # wait until data has loaded
 
