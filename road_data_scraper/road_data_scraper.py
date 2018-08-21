@@ -102,22 +102,6 @@ def generate_csvs():
           # # Write empty row
           # wr.writerow([])
 
-          # # 2. Status of Executing Machinery
-          # try:
-          #   table_2 = driver.find_element_by_css_selector("div#divContentSPExecOfficers").find_element_by_tag_name("table")
-          #   for row in table_2.find_elements_by_css_selector('tr'):
-          #     wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')]) 
-          # except StaleElementReferenceException:
-          #   csvfile.truncate(0)
-          #   print('StaleElementReferenceException thrown, trying again')
-          #   return False
-          # except NoSuchElementException:
-          #   print('no status of executing machinery table found')
-          #   pass
-
-          # # Write empty row
-          # wr.writerow([])
-
           # 3. Phasewise Summary
           try:
             table_3 = driver.find_element_by_css_selector("div#divContentSPPhaseSummary").find_element_by_tag_name("table")
