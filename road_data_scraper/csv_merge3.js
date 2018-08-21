@@ -32,7 +32,7 @@ const writeHeader = async () => {
     'Balance Length of Road Work to be Completed (in Kms)',
     'Total No. of LSB Works',
     'Net length of LSB Works (in Mts)',
-    'From ACcounts (Rs. in Lacs) (Roads + LSB)'
+    'From Accounts (Rs. in Lacs) (Roads + LSB)'
   ]
   stream.write(header + '\r\n')
 }
@@ -50,9 +50,10 @@ const readCSVs = async dir => {
 
         const numberOfLines = data.length
         const numberOfYears = numberOfLines - 5
-
+        
         for(let i = 0; i < numberOfYears; ++i) {
-          stream.write([state, district, i] + '\r\n')
+          // data starts from row 2
+          stream.write([state, district].concat(data[i+2]) + '\r\n')
         }
       }
       catch (e) {
