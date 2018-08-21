@@ -15,9 +15,7 @@ This script takes data from HTML tables from http://omms.nic.in/ and generates C
 
 3. Run `python -m pip install selenium` to install selenium
 
-4. Run `python road_data_scraper.py` or `python .\road_data_scraper.py`
-
-Or to start from a certain state, pass in the dropdown index as an argument. (e.g. `python road_data_scraper.py 5`)
+4. Run `python road_data_scraper.py` or `python .\road_data_scraper.py` 
 
 5. CSV files should be created in road_data_scraper/output/
 
@@ -25,6 +23,8 @@ Or to start from a certain state, pass in the dropdown index as an argument. (e.
 
 1. Type `npm install`
 
-2. Run `npm run start`
+2. Run `npm run section1` to merge Status Of Connectivity
 
-3. 'Status of Connectivity.csv' will be created in the /output/ directory
+3. Run `npm run section3` to merge Phasewise Summary
+
+3. Merged files will be created in lfs-data-scraper/road_data_scraper
