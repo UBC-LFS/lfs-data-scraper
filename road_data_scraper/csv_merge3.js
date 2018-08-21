@@ -17,7 +17,22 @@ const writeHeader = async () => {
     'District',
     'State',
     'Year',
-    
+    'Total Value of Projects [Roads + LSB] (Rs. in Lacs)',
+    'Net No. of Road Works',
+    'Total Value of Road Works (Rs. in Lacs)',
+    'Total No. of Habitations Covered',
+    'Total length of Road Works (in Km)',
+    'Total No. of LSB Works',
+    'Total value of LSB Works (Rs. in Lacs)',
+    'Net length of LSB Works (in Mts)',
+    'Total No of Dropped Works',
+    'Net No. of Road Works',
+    'Total No. of Habitations Benefitted',
+    'Total Length of Road Works Completed (in Kms.)',
+    'Balance Length of Road Work to be Completed (in Kms)',
+    'Total No. of LSB Works',
+    'Net length of LSB Works (in Mts)',
+    'From ACcounts (Rs. in Lacs) (Roads + LSB)'
   ]
   stream.write(header + '\r\n')
 }
@@ -32,46 +47,8 @@ const readCSVs = async dir => {
         let splitIndex = inputPath.indexOf('-');
         const state = inputPath.slice(0,splitIndex).trim();
         const district = inputPath.slice(splitIndex + 1).split('.csv')[0].trim();
-     
-        // data repeated for each state + district (initially -1, changed to actual values if found in individual CSVs)
-        let TotalNumberOfHabitationsEnteredAsOn01042000 = ['NA','NA','NA','NA','NA','NA','NA','NA']
-        let TotalNumberOfHabitationsEntered = ['NA','NA','NA','NA','NA','NA','NA','NA']
-        let TotalNumberOfConnectedHabitationsAsOn01042000 = ['NA','NA','NA','NA','NA','NA','NA','NA']
-        let TotalNumberOfConnectedHabitationsEntered = ['NA','NA','NA','NA','NA','NA','NA','NA']
-        
-        let TotalNumberOfUnConnectedHabitations01042000 = ['NA','NA','NA','NA','NA','NA','NA','NA']
-        let TotalNumberOfUnConnectedHabitationsEntered = ['NA','NA','NA','NA','NA','NA','NA','NA']
-        let StatusOfConnectivityUnderStateScheme = ['NA','NA','NA','NA','NA','NA','NA','NA']
-        let NoOfUnconnectedHabitations = ['NA','NA','NA','NA','NA','NA','NA','NA']
 
-        for(let i = 0; i < data.length; i++) {
-          if(data[i].length > 0 && data[i][0].includes('Total number of Habitations (As on 01-04-2000)')) {
-            TotalNumberOfHabitationsEnteredAsOn01042000 = data[i].slice(1)
-          } else if(data[i].length > 0 && data[i][0].includes('Total number of Habitations Entered')) {
-            TotalNumberOfHabitationsEntered = data[i].slice(1)
-          } else if(data[i].length > 0 && data[i][0].includes('Total number of Connected Habitations (As on 01-04-2000)')) {
-            TotalNumberOfConnectedHabitationsAsOn01042000 = data[i].slice(1)
-          } else if(data[i].length > 0 && data[i][0].includes('Total number of Connected Habitations Entered')) {
-            TotalNumberOfConnectedHabitationsEntered = data[i].slice(1)
-          } else if(data[i].length > 0 && data[i][0].includes('Total number of UnConnected Habitations (As on 01-04-2000)')) {
-            TotalNumberOfUnConnectedHabitations01042000 = data[i].slice(1)
-          } else if(data[i].length > 0 && data[i][0].includes('Total number of UnConnected Habitations Entered')) {
-            TotalNumberOfUnConnectedHabitationsEntered = data[i].slice(1)
-          } else if(data[i].length > 0 && data[i][0].includes('Status of connectivity of Habitations covered')) {
-            StatusOfConnectivityUnderStateScheme = data[i].slice(1)
-          } else if(data[i].length > 0 && data[i][0].includes('No of Unconnected Habs after deducting Habs')) {
-            NoOfUnconnectedHabitations = data[i].slice(1)
-          }
-        }
-
-        // find the start of the data for 'Habitations covered by PMGSY: 2xxx - 2xxx
-        let habitationsCoveredStartIndex = 0;
-        for(let i = 0; i < data.length; i++) {
-          if(data[i].length > 0 && data[i][0].includes('Habitations covered by PMGSY: 2000')) {
-            habitationsCoveredStartIndex = i;
-            break;
-          }
-        }
+        // TODO get number of lines and figure out number of years 
 
         for (let i = 0; i <= 18; i++) {
           const years = (2000 + i).toString() + '-' + (2000 + i + 1).toString()

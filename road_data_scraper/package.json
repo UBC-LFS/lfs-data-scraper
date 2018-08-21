@@ -5,7 +5,7 @@
   "main": "csv_merge.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node csv_merge.js"
+    "start": "node csv_merge3.js"
   },
   "author": "",
   "license": "ISC",
