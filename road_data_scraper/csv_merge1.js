@@ -1,3 +1,5 @@
+// Script for merging section 1 (Status of Connectivity) 
+
 const fs = require('fs')
 let dir = fs.readdirSync(__dirname + '/output/')
 const { promisify } = require('util')

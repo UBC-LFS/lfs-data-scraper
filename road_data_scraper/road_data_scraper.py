@@ -130,9 +130,6 @@ def generate_csvs():
           except NoSuchElementException:
             print('no phasewise summary found')
             pass
-            
-          # Write empty row
-          wr.writerow([])
 
           # # 4. Batchwise Summary (there's an arbitrary number of tables for different years)
           # try:
