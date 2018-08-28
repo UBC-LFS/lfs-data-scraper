@@ -61,59 +61,62 @@ def generate_csvs():
           wr = csv.writer(csvfile)
           
           # 1. Status of Connectivity
-          # try:
-          #   table_1a = driver.find_element_by_css_selector("div#divContentSPConnStat").find_element_by_tag_name("table")
-          #   for row in table_1a.find_elements_by_css_selector('tr'):
-          #     wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td')]) 
-          # except StaleElementReferenceException:
-          #   csvfile.truncate(0)
-          #   print('StaleElementReferenceException thrown, trying again')
-          #   return False
-          # except NoSuchElementException:
-          #   print('no status of connectivity table found')
-          #   pass
-
-          # try:
-          #   table_1b = driver.find_element_by_css_selector("div#divContentSPHabCoverage").find_element_by_tag_name("table").find_element_by_tag_name("tbody")
-          #   # grab habitation years, use it as column name for 2 iterations  
-          #   habitation_years_name = None
-
-          #   for row in table_1b.find_elements_by_xpath('./tr'):
-          #     habitation_coverage_row = []
-          #     for d in row.find_elements_by_xpath('./td'):
-          #       if d.text.strip().startswith('Total') or d.text.strip().startswith('Balance'):
-          #         habitation_years_name = d.text.strip()
-          #       elif d.text.strip().startswith('Habitations'): # grab habitation years
-          #         habitation_years_name = d.text.strip()
-          #       elif not re.search(r'\d', d.text): # not a number
-          #         habitation_coverage_row.append(habitation_years_name + ' ' + d.text)
-          #       else: # number
-          #         habitation_coverage_row.append(d.text)
-          #     wr.writerow(habitation_coverage_row) 
-
-          # except StaleElementReferenceException:
-          #   csvfile.truncate(0)
-          #   print('StaleElementReferenceException thrown, trying again')
-          #   return False
-          # except NoSuchElementException:
-          #   print('no status of connectivity table found')
-          #   pass
-
-          # # Write empty row
-          # wr.writerow([])
-
-          # 3. Phasewise Summary
           try:
-            table_3 = driver.find_element_by_css_selector("div#divContentSPPhaseSummary").find_element_by_tag_name("table")
-            for row in table_3.find_elements_by_css_selector('tr'):
-              wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td') if not d.text.strip().startswith('Note') and not d.text.strip().startswith('Total No. of Sanctioned Works = ') ]) # filter out the notes
+            table_1a = driver.find_element_by_css_selector("div#divContentSPConnStat").find_element_by_tag_name("table")
+            for row in table_1a.find_elements_by_css_selector('tr'):
+              row_1a = []
+              for d in row.find_elements_by_css_selector('th,td'):
+                row_1a.append(d.text)
+              wr.writerow(row_1a) 
           except StaleElementReferenceException:
             csvfile.truncate(0)
             print('StaleElementReferenceException thrown, trying again')
             return False
           except NoSuchElementException:
-            print('no phasewise summary found')
+            print('no status of connectivity table found')
             pass
+
+          try:
+            table_1b = driver.find_element_by_css_selector("div#divContentSPHabCoverage").find_element_by_tag_name("table").find_element_by_tag_name("tbody")
+            # grab habitation years, use it as column name for 2 iterations  
+            habitation_years_name = None
+
+            for row in table_1b.find_elements_by_xpath('./tr'):
+              habitation_coverage_row = []
+              for d in row.find_elements_by_xpath('./td'):
+                if d.text.strip().startswith('Total') or d.text.strip().startswith('Balance'):
+                  habitation_years_name = d.text.strip()
+                elif d.text.strip().startswith('Habitations'): # grab habitation years
+                  habitation_years_name = d.text.strip()
+                elif not re.search(r'\d', d.text): # not a number
+                  habitation_coverage_row.append(habitation_years_name + ' ' + d.text)
+                else: # number
+                  habitation_coverage_row.append(d.text)
+              wr.writerow(habitation_coverage_row) 
+
+          except StaleElementReferenceException:
+            csvfile.truncate(0)
+            print('StaleElementReferenceException thrown, trying again')
+            return False
+          except NoSuchElementException:
+            print('no status of connectivity table found')
+            pass
+
+          # # Write empty row
+          # wr.writerow([])
+
+          # 3. Phasewise Summary
+          # try:
+          #   table_3 = driver.find_element_by_css_selector("div#divContentSPPhaseSummary").find_element_by_tag_name("table")
+          #   for row in table_3.find_elements_by_css_selector('tr'):
+          #     wr.writerow([d.text for d in row.find_elements_by_css_selector('th,td') if not d.text.strip().startswith('Note') and not d.text.strip().startswith('Total No. of Sanctioned Works = ') ]) # filter out the notes
+          # except StaleElementReferenceException:
+          #   csvfile.truncate(0)
+          #   print('StaleElementReferenceException thrown, trying again')
+          #   return False
+          # except NoSuchElementException:
+          #   print('no phasewise summary found')
+          #   pass
 
           # # 4. Batchwise Summary (there's an arbitrary number of tables for different years)
           # try:
@@ -181,7 +184,7 @@ def generate_csvs():
   if not failed_files:
     print('Successfully finished scraping all data')
   else:
-    print(failed_fies)
+    print(failed_files)
 
   end_time = time.time()
   print('Total seconds taken: ')
